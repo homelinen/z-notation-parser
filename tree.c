@@ -17,6 +17,17 @@ struct element {
     struct element *next;
 };
 
+typedef struct twin {
+    int left;
+    int right;
+} pair;
+
+void create_pair(pair** p, int left, int right) {
+    *p = (pair*) malloc( sizeof( struct twin ) );
+    (*p)->left = left;
+    (*p)->right = right;
+}
+
 /**
  * Recurse through the Set freeing memory
  * from the end of the set
@@ -112,5 +123,14 @@ int main(int argc, char** argv) {
     printf("x1 = ");
     print_set(x1, 1);
 
+    //---------------------------------
+    // x2
+    //---------------------------------
+    pair* pair_x1 = 0;
+
+    create_pair(&pair_x1, 1, 20);
+    printf("Pair ( %d, %d )\n", pair_x1->left, pair_x1->right);
+
+    free(pair_x1);
     return 0;
 }
