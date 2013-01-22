@@ -13,7 +13,7 @@ struct node {
 
 // The elements of a set
 struct element {
-    int key_value;
+    void * key_value;
     struct element *next;
 };
 
@@ -48,7 +48,7 @@ void print_set(struct element *el, int front) {
     } 
 
     if (el != 0) {
-        printf("%d", el->key_value);
+        printf("%p", el->key_value);
 
         if (el->next != 0) {
             printf(", ");
@@ -63,9 +63,10 @@ void print_set(struct element *el, int front) {
 /** 
  * Insert the key onto the end of the set
  **/
-void insert_el(int key, struct element **el) {
+void insert_el(void * key, struct element **el) {
     if (*el == 0) {
         *el = (struct element*) malloc( sizeof ( struct element ) );
+        (*el)->key_value = malloc( sizeof (&key) );
         (*el)->key_value = key;
     } else {
         insert_el(key, &((*el)->next));
@@ -116,10 +117,12 @@ int main(int argc, char** argv) {
     //---------------------------------
     struct element *x1 = 0;
     for (i = 1; i <= 7; i++) {
-      insert_el(i, &x1);
+        int *temp = malloc( sizeof (int) );
+        *temp = i;
+        insert_el(temp, &x1);
     }
     // Temporary, should be able to add trees to set
-    insert_el(x0->key_value, &x1);
+    insert_el(&(x0->key_value), &x1);
     printf("x1 = ");
     print_set(x1, 1);
 
