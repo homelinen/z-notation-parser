@@ -1,8 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-const char l_br = '{'
-const char r_br = '}'
+const char LBR = '{';
+const char RBR = '}';
+
 // A node in the tree
 struct node {
     int key_value;
@@ -24,6 +25,27 @@ void destroy_set(struct element *el) {
     if (el == 0) {
         destroy_set(el->next);
         free(el);
+    }
+}
+
+/**
+ * Run through the set and print the values
+ **/
+void print_set(struct element *el, int front) {
+    if (front) {
+        printf("%c", LBR);
+    } 
+
+    if (el != 0) {
+        printf("%d", el->key_value);
+
+        if (el->next != 0) {
+            printf(", ");
+        }
+
+        print_set(el->next, 0);
+    } else {
+        printf("%c\n", RBR);
     }
 }
 
@@ -70,17 +92,25 @@ void insert(int key, struct node **leaf) {
 int main(int argc, char** argv) {
     int i;
 
+    //---------------------------------
+    // x0
+    //---------------------------------
     struct node *x0 = 0;
     insert(8, &x0 );
 
     printf("x0 = %d\n", x0->key_value);
 
+    //---------------------------------
+    // x1
+    //---------------------------------
     struct element *x1 = 0;
     for (i = 1; i <= 7; i++) {
       insert_el(i, &x1);
     }
     // Temporary, should be able to add trees to set
     insert_el(x0->key_value, &x1);
-    printf("x1 = %d\n", x1->next->next->next->next->key_value);
+    printf("x1 = ");
+    print_set(x1, 1);
+
     return 0;
 }
