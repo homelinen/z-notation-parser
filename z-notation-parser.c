@@ -9,6 +9,7 @@
 #define PAIR 6
 #define TREE 7
 
+
 // A node in the tree
 typedef struct node {
     int key_value;
@@ -24,29 +25,50 @@ typedef struct element {
 } set;
 
 typedef struct twin {
-    int left;
-    int right;
+    void* left;
+    int leftType;
+    void* right;
+    int rightType;
 } pair;
 
-void create_pair(pair** p, int left, int right) {
+// Definitions
+void print_set(set*, int);
+void print_pair(pair*);
+void print_type(void*, int);
+
+void create_pair(pair** p, void* left, int lType, void* right, int rType) {
     *p = (pair*) malloc( sizeof( struct twin ) );
     (*p)->left = left;
+    (*p)->leftType = lType;
     (*p)->right = right;
+    (*p)->rightType = rType;
 }
 
 void print_pair(pair* p) {
-    printf("( %d, %d )", p->left, p->right);
+    printf("(");
+
+    print_type(p->left, p->leftType);
+    printf(", ");
+    print_type(p->right, p->rightType);
+    printf(")");
 }
 
-/**
- * Recurse through the Set freeing memory
- * from the end of the set
- **/
-void destroy_set(set *el) {
-    if (el == 0) {
-        destroy_set(el->next);
-        free(el);
-    }
+void print_type(void* val, int type) {
+    
+        switch (type) {
+            case INTEGER: 
+                printf("%d", *((int*) val));
+                break;
+            case SET:
+                print_set(val, 1);
+                break;
+            case PAIR:
+                print_pair(val);
+                break;
+            default:
+                printf("%p", val);
+                break;
+        }
 }
 
 /**
@@ -58,19 +80,11 @@ void print_set(set *el, int front) {
     } 
 
     if (el != 0) {
-        switch (el->type) {
-            case INTEGER: 
-                printf("%d", *((int*) el->key_value));
-                break;
-            case SET:
-                print_set(el->key_value, 1);
-                break;
-            case PAIR:
-                print_pair(el->key_value);
-                break;
-            default:
-                printf("%p", el->key_value);
-        }
+
+        void* val = el->key_value;
+        int type = el->type;
+
+        print_type(val, type);
 
         if (el->next != 0) {
             printf(", ");
@@ -79,6 +93,17 @@ void print_set(set *el, int front) {
         print_set(el->next, 0);
     } else {
         printf("%c", RBR);
+    }
+}
+
+/**
+ * Recurse through the Set freeing memory
+ * from the end of the set
+ **/
+void destroy_set(set *el) {
+    if (el == 0) {
+        destroy_set(el->next);
+        free(el);
     }
 }
 
@@ -154,7 +179,8 @@ int main(int argc, char** argv) {
     //---------------------------------
     pair* pair_x1 = 0;
 
-    create_pair(&pair_x1, 1, 20);
+    int one = 1;
+    create_pair(&pair_x1, &one, INTEGER, x1, SET);
 
     set* x2 = 0;
     insert_el(x1, SET, &x2);
@@ -164,6 +190,17 @@ int main(int argc, char** argv) {
     print_set(x2, 1);
     printf("\n");
 
-    free(pair_x1);
+    //---------------------------------
+    // x3
+    //---------------------------------
+    
+    pair* x3=0;
+    create_pair(&x3, x2, SET, x1, SET);
+
+    printf("x3 = ");
+    print_pair(x3);
+    printf("\n");
+
+    // free things
     return 0;
 }
