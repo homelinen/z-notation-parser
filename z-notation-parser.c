@@ -43,11 +43,17 @@ struct _Pair {
 void print_set(Set*, int);
 void print_pair(Pair*);
 void print_type(Value*);
+Value create_empty_value(int);
 
-void create_pair(Pair** p, Value left, Value right) {
-    *p = (Pair*) malloc( sizeof( Pair ) );
-    (*p)->left = left;
-    (*p)->right = right;
+Value create_pair(Value left, Value right) {
+    Value value_pair;
+    value_pair = create_empty_value(PAIR);
+    Pair* p = (Pair*) malloc( sizeof( Pair ) );
+    p->left = left;
+    p->right = right;
+    value_pair.val.p = p;
+
+    return value_pair;
 }
 
 void print_pair(Pair* p) {
@@ -123,6 +129,30 @@ void insert_el(Value key, Set **el) {
     }
 }
 
+/**
+ * Create a new Value of type, with nothing in it
+ */
+Value create_empty_value(int type) {
+    Value* new_val = (Value*) malloc ( sizeof (Value) );
+    switch (type) {
+
+        case SET:
+            new_val->val.s = 0;
+            new_val->type = SET;
+            break;
+        case INTEGER:
+            new_val->val.i = 0;
+            new_val->type = INTEGER;
+            break;
+        case PAIR:
+            new_val->val.p = 0;
+            new_val->type = PAIR;
+            break;
+    }
+
+    return *new_val;
+}
+
 int main(int argc, char** argv) {
     int i;
 
@@ -139,7 +169,6 @@ int main(int argc, char** argv) {
     //---------------------------------
     // x1
     //---------------------------------
-    //Set *x1 = 0;
     Value *x1 = (Value*) malloc( sizeof (Value) );
     x1->val.s = 0;
     x1->type = SET;
@@ -150,7 +179,7 @@ int main(int argc, char** argv) {
         temp->type = INTEGER;
         insert_el(*temp, &x1->val.s);
     }
-    // Temporary, should be able to add trees to Set
+
     insert_el(*x0, &x1->val.s);
     printf("x1 = ");
     print_type(x1);
@@ -159,24 +188,18 @@ int main(int argc, char** argv) {
     //---------------------------------
     // x2
     //---------------------------------
-    //Pair* pair_x1 = 0;
-    Value* pair_x1 = (Value*) malloc ( sizeof (Value) );
-    pair_x1->val.p = 0;
-    pair_x1->type = PAIR;
 
-    //int one = 1;
     Value* x1_1 = (Value*) malloc ( sizeof (Value) );
     x1_1->val.i = 1;
     x1_1->type = INTEGER;
-    create_pair(&pair_x1->val.p, *x1_1, *x1);
+    Value pair_x1 = create_pair(*x1_1, *x1);
 
-    //Set* x2 = 0;
     Value *x2 = (Value*) malloc( sizeof (Value) );
     x2->val.s = 0;
     x2->type = SET;
 
     insert_el(*x1, &x2->val.s);
-    insert_el(*pair_x1, &x2->val.s);
+    insert_el(pair_x1, &x2->val.s);
 
     printf("x2 = ");
     print_type(x2);
@@ -187,13 +210,10 @@ int main(int argc, char** argv) {
     //---------------------------------
     
     //Pair* x3=0;
-    Value* x3 = (Value*) malloc ( sizeof (Value) );
-    x3->val.p = 0;
-    x3->type = PAIR;
-    create_pair(&x3->val.p, *x2, *x1);
+    Value x3 = create_pair(*x2, *x1);
 
     printf("x3 = ");
-    print_type(x3);
+    print_type(&x3);
     printf("\n");
 
     // free things
