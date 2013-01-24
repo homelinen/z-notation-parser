@@ -9,82 +9,85 @@
 #define PAIR 6
 #define TREE 7
 
+/*
+ * Type definitions
+ */
+typedef struct _Set Set;
+typedef struct _Pair Pair;
+typedef union _Container Container;
+typedef struct _Value Value;
 
-// A node in the tree
-typedef struct node {
-    int key_value;
-    struct node *left;
-    struct node *right;
-} tree;
+union _Container {
+    int i;
+    Set* s;
+    Pair* p;
+};
 
-// The elements of a set
-typedef struct element {
-    void* key_value;
+struct _Value {
+    Container val;
     int type;
-    struct element *next;
-} set;
+};
 
-typedef struct twin {
-    void* left;
-    int leftType;
-    void* right;
-    int rightType;
-} pair;
+// The elements of a Set
+struct _Set {
+    Value val;
+    Set *next;
+};
+
+struct _Pair {
+    Value left;
+    Value right;
+};
 
 // Definitions
-void print_set(set*, int);
-void print_pair(pair*);
-void print_type(void*, int);
+void print_set(Set*, int);
+void print_pair(Pair*);
+void print_type(Value*);
 
-void create_pair(pair** p, void* left, int lType, void* right, int rType) {
-    *p = (pair*) malloc( sizeof( struct twin ) );
+void create_pair(Pair** p, Value left, Value right) {
+    *p = (Pair*) malloc( sizeof( Pair ) );
     (*p)->left = left;
-    (*p)->leftType = lType;
     (*p)->right = right;
-    (*p)->rightType = rType;
 }
 
-void print_pair(pair* p) {
+void print_pair(Pair* p) {
     printf("(");
 
-    print_type(p->left, p->leftType);
+    print_type(&p->left);
     printf(", ");
-    print_type(p->right, p->rightType);
+    print_type(&p->right);
     printf(")");
 }
 
-void print_type(void* val, int type) {
+void print_type(Value* val) {
     
-        switch (type) {
-            case INTEGER: 
-                printf("%d", *((int*) val));
-                break;
-            case SET:
-                print_set(val, 1);
-                break;
-            case PAIR:
-                print_pair(val);
-                break;
-            default:
-                printf("%p", val);
-                break;
-        }
+    switch (val->type) {
+        case INTEGER: 
+            printf("%d", val->val.i);
+            break;
+        case SET:
+            print_set(val->val.s, 1);
+            break;
+        case PAIR:
+            print_pair(val->val.p);
+            break;
+        default:
+            printf("%p", val);
+            break;
+    }
 }
 
 /**
- * Run through the set and print the values
+ * Run through the Set and print the values
  **/
-void print_set(set *el, int front) {
+void print_set(Set *el, int front) {
     if (front) {
         printf("%c", LBR);
     } 
 
     if (el != 0) {
 
-        void* val = el->key_value;
-        int type = el->type;
-
-        print_type(val, type);
+        print_type(&el->val);
 
         if (el->next != 0) {
             printf(", ");
@@ -98,9 +101,9 @@ void print_set(set *el, int front) {
 
 /**
  * Recurse through the Set freeing memory
- * from the end of the set
+ * from the end of the Set
  **/
-void destroy_set(set *el) {
+void destroy_set(Set *el) {
     if (el == 0) {
         destroy_set(el->next);
         free(el);
@@ -108,44 +111,15 @@ void destroy_set(set *el) {
 }
 
 /** 
- * Insert the key onto the end of the set
+ * Insert the key onto the end of the Set
  **/
-void insert_el(void * key, int type, set **el) {
+void insert_el(Value key, Set **el) {
     if (*el == 0) {
-        *el = (set*) malloc( sizeof ( set ) );
-        (*el)->key_value = malloc( sizeof (&key) );
-        (*el)->key_value = key;
-        (*el)->type = type;
+        *el = (Set*) malloc( sizeof ( Set ) );
+        (*el)->val = *((Value*) malloc( sizeof ( Value )));
+        (*el)->val = key;
     } else {
-        insert_el(key, type, &((*el)->next));
-    }
-}
-
-/**
- * Recurse through tree, destroying all children up to leaves
- **/
-void destroy_tree(tree *leaf) {
-    if (leaf != 0) {
-        destroy_tree(leaf->right);
-        destroy_tree(leaf->left);
-        free(leaf);
-    }
-}
-
-/**
- * Insert the key into the tree
- **/
-void insert(int key, tree **leaf) {
-    if( *leaf == 0 ) {
-        *leaf = (tree*) malloc( sizeof( tree ) );
-        (*leaf)->key_value = key;
-        // initialize the children to null
-        (*leaf)->left = 0;    
-        (*leaf)->right = 0;  
-    } else if(key < (*leaf)->key_value) {
-        insert( key, &(*leaf)->left );
-    } else if(key > (*leaf)->key_value) {
-        insert( key, &(*leaf)->right );
+        insert_el(key, &((*el)->next));
     }
 }
 
@@ -155,50 +129,71 @@ int main(int argc, char** argv) {
     //---------------------------------
     // x0
     //---------------------------------
-    int x0 = 8;
+    //int x0 = 8;
+    Value* x0 = (Value*) malloc ( sizeof (Value) );
+    x0->val.i = 8;
+    x0->type = INTEGER;
 
-    printf("x0 = %d\n", x0);
+    printf("x0 = %d\n", x0->val.i);
 
     //---------------------------------
     // x1
     //---------------------------------
-    set *x1 = 0;
+    //Set *x1 = 0;
+    Value *x1 = (Value*) malloc( sizeof (Value) );
+    x1->val.s = 0;
+    x1->type = SET;
+
     for (i = 1; i <= 7; i++) {
-        int *temp = malloc( sizeof (int) );
-        *temp = i;
-        insert_el(temp, INTEGER, &x1);
+        Value *temp = (Value*) malloc( sizeof (Value) );
+        temp->val.i = i;
+        temp->type = INTEGER;
+        insert_el(*temp, &x1->val.s);
     }
-    // Temporary, should be able to add trees to set
-    insert_el(&x0, INTEGER,  &x1);
+    // Temporary, should be able to add trees to Set
+    insert_el(*x0, &x1->val.s);
     printf("x1 = ");
-    print_set(x1, 1);
+    print_type(x1);
     printf("\n");
 
     //---------------------------------
     // x2
     //---------------------------------
-    pair* pair_x1 = 0;
+    //Pair* pair_x1 = 0;
+    Value* pair_x1 = (Value*) malloc ( sizeof (Value) );
+    pair_x1->val.p = 0;
+    pair_x1->type = PAIR;
 
-    int one = 1;
-    create_pair(&pair_x1, &one, INTEGER, x1, SET);
+    //int one = 1;
+    Value* x1_1 = (Value*) malloc ( sizeof (Value) );
+    x1_1->val.i = 1;
+    x1_1->type = INTEGER;
+    create_pair(&pair_x1->val.p, *x1_1, *x1);
 
-    set* x2 = 0;
-    insert_el(x1, SET, &x2);
-    insert_el(pair_x1, PAIR, &x2);
+    //Set* x2 = 0;
+    Value *x2 = (Value*) malloc( sizeof (Value) );
+    x2->val.s = 0;
+    x2->type = SET;
+
+    insert_el(*x1, &x2->val.s);
+    insert_el(*pair_x1, &x2->val.s);
 
     printf("x2 = ");
-    print_set(x2, 1);
+    print_type(x2);
     printf("\n");
 
     //---------------------------------
     // x3
     //---------------------------------
     
-    pair* x3=0;
-    create_pair(&x3, x2, SET, x1, SET);
+    //Pair* x3=0;
+    Value* x3 = (Value*) malloc ( sizeof (Value) );
+    x3->val.p = 0;
+    x3->type = PAIR;
+    create_pair(&x3->val.p, *x2, *x1);
 
     printf("x3 = ");
-    print_pair(x3);
+    print_type(x3);
     printf("\n");
 
     // free things
