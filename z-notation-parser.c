@@ -1,21 +1,27 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-const char LBR = '{';
-const char RBR = '}';
+#define LBR '{'
+#define RBR '}'
+
+#define INTEGER 1
+#define SET 5
+#define PAIR 6
+#define TREE 7
 
 // A node in the tree
-struct node {
+typedef struct node {
     int key_value;
     struct node *left;
     struct node *right;
-};
+} tree;
 
 // The elements of a set
-struct element {
-    void * key_value;
+typedef struct element {
+    void* key_value;
+    int type;
     struct element *next;
-};
+} set;
 
 typedef struct twin {
     int left;
@@ -32,7 +38,7 @@ void create_pair(pair** p, int left, int right) {
  * Recurse through the Set freeing memory
  * from the end of the set
  **/
-void destroy_set(struct element *el) {
+void destroy_set(set *el) {
     if (el == 0) {
         destroy_set(el->next);
         free(el);
@@ -42,13 +48,22 @@ void destroy_set(struct element *el) {
 /**
  * Run through the set and print the values
  **/
-void print_set(struct element *el, int front) {
+void print_set(set *el, int front) {
     if (front) {
         printf("%c", LBR);
     } 
 
     if (el != 0) {
-        printf("%p", el->key_value);
+        switch (el->type) {
+            case INTEGER: 
+                printf("%d", *((int*) el->key_value));
+                break;
+            case SET:
+                print_set(el->key_value, 0);
+                break;
+            default:
+                printf("%p", el->key_value);
+        }
 
         if (el->next != 0) {
             printf(", ");
@@ -63,20 +78,21 @@ void print_set(struct element *el, int front) {
 /** 
  * Insert the key onto the end of the set
  **/
-void insert_el(void * key, struct element **el) {
+void insert_el(void * key, int type, set **el) {
     if (*el == 0) {
-        *el = (struct element*) malloc( sizeof ( struct element ) );
+        *el = (set*) malloc( sizeof ( set ) );
         (*el)->key_value = malloc( sizeof (&key) );
         (*el)->key_value = key;
+        (*el)->type = type;
     } else {
-        insert_el(key, &((*el)->next));
+        insert_el(key, type, &((*el)->next));
     }
 }
 
 /**
  * Recurse through tree, destroying all children up to leaves
  **/
-void destroy_tree(struct node *leaf) {
+void destroy_tree(tree *leaf) {
     if (leaf != 0) {
         destroy_tree(leaf->right);
         destroy_tree(leaf->left);
@@ -87,9 +103,9 @@ void destroy_tree(struct node *leaf) {
 /**
  * Insert the key into the tree
  **/
-void insert(int key, struct node **leaf) {
+void insert(int key, tree **leaf) {
     if( *leaf == 0 ) {
-        *leaf = (struct node*) malloc( sizeof( struct node ) );
+        *leaf = (tree*) malloc( sizeof( tree ) );
         (*leaf)->key_value = key;
         // initialize the children to null
         (*leaf)->left = 0;    
@@ -107,22 +123,21 @@ int main(int argc, char** argv) {
     //---------------------------------
     // x0
     //---------------------------------
-    struct node *x0 = 0;
-    insert(8, &x0 );
+    int x0 = 8;
 
-    printf("x0 = %d\n", x0->key_value);
+    printf("x0 = %d\n", x0);
 
     //---------------------------------
     // x1
     //---------------------------------
-    struct element *x1 = 0;
+    set *x1 = 0;
     for (i = 1; i <= 7; i++) {
         int *temp = malloc( sizeof (int) );
         *temp = i;
-        insert_el(temp, &x1);
+        insert_el(temp, INTEGER, &x1);
     }
     // Temporary, should be able to add trees to set
-    insert_el(&(x0->key_value), &x1);
+    insert_el(&x0, INTEGER,  &x1);
     printf("x1 = ");
     print_set(x1, 1);
 
