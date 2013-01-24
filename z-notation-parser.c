@@ -34,6 +34,10 @@ void create_pair(pair** p, int left, int right) {
     (*p)->right = right;
 }
 
+void print_pair(pair* p) {
+    printf("( %d, %d )", p->left, p->right);
+}
+
 /**
  * Recurse through the Set freeing memory
  * from the end of the set
@@ -59,7 +63,10 @@ void print_set(set *el, int front) {
                 printf("%d", *((int*) el->key_value));
                 break;
             case SET:
-                print_set(el->key_value, 0);
+                print_set(el->key_value, 1);
+                break;
+            case PAIR:
+                print_pair(el->key_value);
                 break;
             default:
                 printf("%p", el->key_value);
@@ -71,7 +78,7 @@ void print_set(set *el, int front) {
 
         print_set(el->next, 0);
     } else {
-        printf("%c\n", RBR);
+        printf("%c", RBR);
     }
 }
 
@@ -140,6 +147,7 @@ int main(int argc, char** argv) {
     insert_el(&x0, INTEGER,  &x1);
     printf("x1 = ");
     print_set(x1, 1);
+    printf("\n");
 
     //---------------------------------
     // x2
@@ -147,7 +155,14 @@ int main(int argc, char** argv) {
     pair* pair_x1 = 0;
 
     create_pair(&pair_x1, 1, 20);
-    printf("Pair ( %d, %d )\n", pair_x1->left, pair_x1->right);
+
+    set* x2 = 0;
+    insert_el(x1, SET, &x2);
+    insert_el(pair_x1, PAIR, &x2);
+
+    printf("x2 = ");
+    print_set(x2, 1);
+    printf("\n");
 
     free(pair_x1);
     return 0;
