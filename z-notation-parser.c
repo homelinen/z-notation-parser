@@ -124,6 +124,7 @@ void insert_el(Value key, Set **el) {
         *el = (Set*) malloc( sizeof ( Set ) );
         (*el)->val = *((Value*) malloc( sizeof ( Value )));
         (*el)->val = key;
+        (*el)->next = 0;
     } else {
         insert_el(key, &((*el)->next));
     }
@@ -151,6 +152,18 @@ Value create_empty_value(int type) {
     }
 
     return *new_val;
+}
+
+/**
+ * Create the union between the second set and first set
+ * The first set is used to store the second
+ **/
+void set_union(Set* first, Set* second) {
+
+    if (second != 0) {
+        insert_el(second->val, &first);
+        set_union(first, second->next);
+    }
 }
 
 int main(int argc, char** argv) {
@@ -209,11 +222,23 @@ int main(int argc, char** argv) {
     // x3
     //---------------------------------
     
-    //Pair* x3=0;
     Value x3 = create_pair(*x2, *x1);
 
     printf("x3 = ");
     print_type(&x3);
+    printf("\n");
+
+    //---------------------------------
+    // x4
+    //---------------------------------
+    
+    Value x4 = create_empty_value(SET);
+    insert_el(x3, &(&x4)->val.s);
+
+    set_union((&x4)->val.s, x2->val.s);
+
+    printf("x4 = ");
+    print_type(&x4);
     printf("\n");
 
     // free things
