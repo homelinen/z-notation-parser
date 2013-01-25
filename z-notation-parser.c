@@ -187,23 +187,36 @@ void subtraction(Set* first, Set* second, int head) {
             }
         }
 
-        if (first->next != 0 && second->next != 0) {
+        if (first->next != 0) {
 
-            // Check if the children are equal
-            if (value_equality(&(first->next->val), &(second->next->val))) {
-                Set* next = first->next;
-                // Change the current next pointer to the child's child
-                // Remove the child node from the list
-                first->next = first->next->next;
+            // Copy the second set
+            Set* sec_temp = (Set*) (malloc ( sizeof (Set) ));
+            *sec_temp = *second;
 
-                // Remove next from memory
-                //
-                // TODO: Pointers are all messed up, so maybe don't do this
-                //free(next);
-            }
+            // Iterate through all of the second sets children
+            do {
 
+                // Check if the children are equal
+                if (value_equality(&(first->next->val), &(sec_temp->val))) {
+                    Set* next = first->next;
+                    // Change the current next pointer to the child's child
+                    // Remove the child node from the list
+                    first->next = first->next->next;
+
+                    // Remove next from memory
+                    //
+                    // TODO: Pointers are all messed up, so maybe don't do this
+                    //free(next);
+                }
+
+                if (sec_temp->next != 0) {
+                    *sec_temp = *(sec_temp->next);
+                } else {
+                    sec_temp = 0;
+                }
+            } while (sec_temp != 0);
             // Subtract the next two elements
-            subtraction(first->next, second->next, 0);
+            subtraction(first->next, second, 0);
         }
     }
 }
