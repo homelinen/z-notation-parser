@@ -174,8 +174,38 @@ void set_union(Set* first, Set* second) {
 /**
  * Remove the elements from set 2 that match those of set 1
  */
-void subtraction(Set* first, Set* second) {
+void subtraction(Set* first, Set* second, int head) {
 
+    if (first != 0 && second != 0) {
+
+        // Check the current node for equality only on the head of the set, otherwise weird things may happen.
+        if (head) {
+            if (value_equality(&(first->val), &(second->val))) {
+                if (first->next != 0) {
+                    first = first->next;
+                }
+            }
+        }
+
+        if (first->next != 0 && second->next != 0) {
+
+            // Check if the children are equal
+            if (value_equality(&(first->next->val), &(second->next->val))) {
+                Set* next = first->next;
+                // Change the current next pointer to the child's child
+                // Remove the child node from the list
+                first->next = first->next->next;
+
+                // Remove next from memory
+                //
+                // TODO: Pointers are all messed up, so maybe don't do this
+                //free(next);
+            }
+
+            // Subtract the next two elements
+            subtraction(first->next, second->next, 0);
+        }
+    }
 }
 
 /**
@@ -322,6 +352,7 @@ int main(int argc, char** argv) {
     // Insert x3 into x4
     insert_el(x3, &(&x4)->val.s);
 
+    // { x3 } U x2
     set_union((&x4)->val.s, x2->val.s);
 
     printf("x4 = ");
@@ -331,8 +362,19 @@ int main(int argc, char** argv) {
     //---------------------------------
     // x5
     //---------------------------------
-    printf("x1 == x1\n%d\n", value_equality(&pair_x1,&pair_x1));
-    
+   
+    Value x4_temp = create_empty_value(SET);
+    x4_temp = x4;
+
+    Value x1_set = create_empty_value(SET);
+    insert_el(*x1, &(&x1_set)->val.s);
+
+    subtraction((&x4_temp)->val.s, (&x1_set)->val.s, 1);
+
+    printf("x5 = ");
+    print_type(&x4_temp);
+    printf("\n");
+
     // free things
     return 0;
 }
