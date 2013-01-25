@@ -32,6 +32,7 @@ struct _Value {
 struct _Set {
     Value val;
     Set *next;
+    int length;
 };
 
 struct _Pair {
@@ -44,6 +45,8 @@ void print_set(Set*, int);
 void print_pair(Pair*);
 void print_type(Value*);
 Value create_empty_value(int);
+
+int value_equality(Value*, Value*);
 
 Value create_pair(Value left, Value right) {
     Value value_pair;
@@ -125,8 +128,10 @@ void insert_el(Value key, Set **el) {
         (*el)->val = *((Value*) malloc( sizeof ( Value )));
         (*el)->val = key;
         (*el)->next = 0;
+        (*el)->length = 1;
     } else {
         insert_el(key, &((*el)->next));
+        (*el)->length += 1;
     }
 }
 
@@ -164,6 +169,86 @@ void set_union(Set* first, Set* second) {
         insert_el(second->val, &first);
         set_union(first, second->next);
     }
+}
+
+/**
+ * Remove the elements from set 2 that match those of set 1
+ */
+void subtraction(Set* first, Set* second) {
+
+}
+
+/**
+ * Check if two sets are equal
+ *
+ * Two sets are equal if their elements are equal
+ */
+int set_contents_equality(Set* first, Set* second) {
+
+    if (first != 0 && second != 0) {
+
+        // If first value false, return 0
+        if (!(value_equality(&(first->val), &(second->val)))) {
+           return 0; 
+        }
+
+        // If reached the end of the sets without error, they're the same
+        if (first->next == 0 && second->next == 0) {
+            return 1;
+        }
+
+        // Compare first set with the second
+        if (value_equality(&(first->next->val), &(second->next->val))) {
+            // Check the next elements in the set for equality
+            return set_contents_equality(first->next, second->next);
+        }
+    }
+        
+    return 0;
+}
+
+int pair_equality(Pair* first, Pair* second) {
+    if (value_equality(&(first->left), &(second->left)) &&
+            value_equality(&(first->right), &(second->right))) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+/**
+ * Check if two values are equal
+ */
+int value_equality(Value* first, Value* second) {
+    
+    // If not the same type, not the same
+    if (first->type != second->type) {
+        return 0;
+    }
+
+    switch (first->type) {
+        case INTEGER: 
+            if (first->val.i == second->val.i) {
+                return 1;
+            }
+            break;
+        case SET:
+            // Check set length
+            if (first->val.s->length == second->val.s->length) {
+                return 1;
+            } else if (set_contents_equality(first->val.s, second->val.s)) {
+                return 1;
+            }
+            break;
+        case PAIR:
+            if (pair_equality(first->val.p, second->val.p)) {
+                return 1;
+            }
+            break;
+    }
+
+    // If no tests passed, it has to be false
+    return 0;
 }
 
 int main(int argc, char** argv) {
@@ -233,6 +318,8 @@ int main(int argc, char** argv) {
     //---------------------------------
     
     Value x4 = create_empty_value(SET);
+
+    // Insert x3 into x4
     insert_el(x3, &(&x4)->val.s);
 
     set_union((&x4)->val.s, x2->val.s);
@@ -241,6 +328,11 @@ int main(int argc, char** argv) {
     print_type(&x4);
     printf("\n");
 
+    //---------------------------------
+    // x5
+    //---------------------------------
+    printf("x1 == x1\n%d\n", value_equality(&pair_x1,&pair_x1));
+    
     // free things
     return 0;
 }
