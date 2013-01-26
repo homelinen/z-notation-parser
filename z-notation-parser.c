@@ -222,6 +222,50 @@ void subtraction(Set* first, Set* second, int head) {
 }
 
 /**
+ * Create a new set containing the values of first and second that intersect
+ */
+void intersection(Set* first, Set* second, Set* intersected, int head) {
+
+    if (first != 0 && second != 0) {
+
+        // Check the current node for equality only on the head of the set, otherwise weird things may happen.
+        if (head) {
+            if (value_equality(&(first->val), &(second->val))) {
+                // Only checking the heads of the set, need children as well
+
+                printf("\n");
+
+                insert_el(first->val, &intersected);
+            }
+        }
+
+        if (first->next != 0) {
+
+            // Copy the second set
+            Set* sec_temp = (Set*) (malloc ( sizeof (Set) ));
+            *sec_temp = *second;
+
+            // Iterate through all of the second sets children
+            do {
+                // Check if the children are equal
+                if (value_equality(&(first->next->val), &(sec_temp->val))) {
+                    // Insert the intersected value
+                    insert_el(first->next->val, &intersected);
+                }
+
+                if (sec_temp->next != 0) {
+                    *sec_temp = *(sec_temp->next);
+                } else {
+                    sec_temp = 0;
+                }
+            } while (sec_temp != 0);
+
+            // Find intersection for next
+            intersection(first->next, second, intersected, 0);
+        }
+    }
+}
+/**
  * Check if two sets are equal
  *
  * Two sets are equal if their elements are equal
@@ -386,6 +430,26 @@ int main(int argc, char** argv) {
 
     printf("x5 = ");
     print_type(&x4_temp);
+    printf("\n");
+
+    //---------------------------------
+    // x6
+    //---------------------------------
+   
+    // Rebuild x4 to get around a pointer problem with x4_temp above
+    x4_temp = create_empty_value(SET);
+    insert_el(x3, &(&x4_temp)->val.s);
+    set_union((&x4_temp)->val.s, x2->val.s);
+
+    // Assign memory for intersected set
+    Set* intersected = (Set*) malloc ( sizeof(Set) );
+
+    intersection((&x4_temp)->val.s, (&x1_set)->val.s, intersected, 1);
+    //Drop the head of the set (Horrific code)
+    intersected = intersected->next;
+
+    printf("x6 = ");
+    print_set(intersected, 1);
     printf("\n");
 
     // free things
