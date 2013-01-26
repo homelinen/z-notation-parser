@@ -86,6 +86,8 @@ void print_set(Set *el) {
 /**
  * Create the union between the second set and first set
  *
+ * Operation is done in-place on first, so first is overwritten
+ *
  * first - The initial set and the set that second is appended to
  *
  * Returns the union in first, through pointers
@@ -95,6 +97,7 @@ void set_union(Set* first, Set* second) {
     //Assuming the head of the set is always non-zero
 
     if (second->next != 0) {
+        //Recursively add the next val of second to first
         insert_el(second->next->val, &first);
 
         set_union(first, second->next);
@@ -102,24 +105,17 @@ void set_union(Set* first, Set* second) {
 }
 
 /**
- * Find the elements in seconrd that are equal to those in first and remove them from first
+ * Remove elements from first that appear in second.
  *
- * first - The initial set and modified set
+ * Find the elements in second that are equal to those in first and remove them from first.
+ *
+ * first - The initial set and modified set, as first is modified in place
  * second - The set to compare against
  * head - bool value to determine if set is head or not
  */
 void subtraction(Set* first, Set* second, int head) {
 
     if (first != 0 && second != 0) {
-
-        // Check the current node for equality only on the head of the set, otherwise weird things may happen.
-        if (head) {
-            if (value_equality(&(first->val), &(second->val))) {
-                if (first->next != 0) {
-                    first = first->next;
-                }
-            }
-        }
 
         if (first->next != 0) {
 
@@ -149,26 +145,27 @@ void subtraction(Set* first, Set* second, int head) {
                     sec_temp = 0;
                 }
             } while (sec_temp != 0);
-            // Subtract the next two elements
+            // Subtract all of the second elements from the next element
             subtraction(first->next, second, 0);
         }
     }
 }
 
 /**
- * Create a new set containing the values of first and second that intersect
+ * Find the intersection of two sets: first and second.
+ *
+ * The intersection between two sets is a set of all elements in the two sets that can be found in BOTH sets.
+ *
+ * first - First Set
+ * second - Second Set
+ * intersected - address to put the new set
+ * head - unneeded
+ *
+ * Returns all the elements in first that are the same as those in second. These matching elements are placed in intersected.
  */
 void intersection(Set* first, Set* second, Set* intersected, int head) {
 
     if (first != 0 && second != 0) {
-
-        // Check the current node for equality only on the head of the set, otherwise weird things may happen.
-        if (head) {
-            if (value_equality(&(first->val), &(second->val))) {
-                // Only checking the heads of the set, need children as well
-                insert_el(first->val, &intersected);
-            }
-        }
 
         if (first->next != 0) {
 

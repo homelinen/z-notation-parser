@@ -7,6 +7,9 @@
 /** 
  * Print the answer for each task to spec
  *
+ * num - The number to be printed beside x
+ * val - The value to be printed
+ *
  * Example
  *   x1 = {1,2,3,4,5,6,7,8};
  */
@@ -22,7 +25,7 @@ int main(int argc, char** argv) {
     //---------------------------------
     // x0
     //---------------------------------
-    //int x0 = 8;
+
     Value* x0 = (Value*) malloc ( sizeof (Value) );
     x0->val.i = 8;
     x0->type = INTEGER;
@@ -35,6 +38,7 @@ int main(int argc, char** argv) {
     Value x1 = create_empty_value( SET );
     create_set(&x1.val.s);
 
+    //Insert values into the set 
     for (i = 1; i <= 7; i++) {
         Value *temp = (Value*) malloc( sizeof (Value) );
         temp->val.i = i;
@@ -66,6 +70,7 @@ int main(int argc, char** argv) {
     // x3
     //---------------------------------
     
+    // (x2, x1)
     Value x3 = create_pair(x2, x1);
 
     print_answer(3, &x3);
@@ -77,7 +82,8 @@ int main(int argc, char** argv) {
     Value x4 = create_empty_value(SET);
     create_set(&x4.val.s);
 
-    // Insert x3 into x4
+    // Insert x3 into x4, so that x3 is enclosed by a set
+    // { x3 }
     insert_el(x3, &(&x4)->val.s);
 
     // { x3 } U x2
@@ -120,5 +126,6 @@ int main(int argc, char** argv) {
     printf(";\n");
 
     // free things
+
     return 0;
 }
