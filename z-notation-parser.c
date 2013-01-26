@@ -1,3 +1,9 @@
+/**
+ * Foundations 2 Assignment: Part 1
+ *
+ * A solution for the first part of the assignment, building tree-like data structures.
+ */
+
 #include <stdlib.h>
 #include <stdio.h>
 
