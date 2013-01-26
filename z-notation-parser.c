@@ -1,9 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define LBR '{'
-#define RBR '}'
-
 #define INTEGER 1
 #define SET 5
 #define PAIR 6
@@ -33,6 +30,7 @@ struct _Set {
     Value val;
     Set *next;
     int length;
+    int head;
 };
 
 struct _Pair {
@@ -41,7 +39,7 @@ struct _Pair {
 };
 
 // Definitions
-void print_set(Set*, int);
+void print_set(Set*);
 void print_pair(Pair*);
 void print_type(Value*);
 Value create_empty_value(int);
@@ -75,7 +73,7 @@ void print_type(Value* val) {
             printf("%d", val->val.i);
             break;
         case SET:
-            print_set(val->val.s, 1);
+            print_set(val->val.s);
             break;
         case PAIR:
             print_pair(val->val.p);
@@ -89,22 +87,24 @@ void print_type(Value* val) {
 /**
  * Run through the Set and print the values
  **/
-void print_set(Set *el, int front) {
-    if (front) {
-        printf("%c", LBR);
-    } 
-
+void print_set(Set *el) {
     if (el != 0) {
+        if (el->head) {
+            printf("{");
+        } 
 
-        print_type(&el->val);
 
-        if (el->next != 0) {
-            printf(", ");
+        if (!el->head) {
+            print_type(&el->val);
+
+            if (el->next != 0) {
+                printf(", ");
+            }
         }
 
-        print_set(el->next, 0);
+        print_set(el->next);
     } else {
-        printf("%c", RBR);
+        printf("}");
     }
 }
 
@@ -119,17 +119,26 @@ void destroy_set(Set *el) {
     }
 }
 
+/**
+ * Create the head of an empty set
+ */
+void create_set(Set **set_new) {
+    *set_new = (Set*) malloc( sizeof ( Set ) );
+    (*set_new)->val = *((Value*) malloc( sizeof ( Value )));
+    (*set_new)->next = 0;
+    (*set_new)->length = 1;
+    (*set_new)->head = 1;
+}
+
 /** 
  * Insert the key onto the end of the Set
  **/
 void insert_el(Value key, Set **el) {
     if (*el == 0) {
-        *el = (Set*) malloc( sizeof ( Set ) );
-        (*el)->val = *((Value*) malloc( sizeof ( Value )));
+        create_set (el);
         (*el)->val = key;
-        (*el)->next = 0;
-        (*el)->length = 1;
-    } else {
+        (*el)->head = 0;
+    } else if (*el != 0) {
         insert_el(key, &((*el)->next));
         (*el)->length += 1;
     }
@@ -165,8 +174,9 @@ Value create_empty_value(int type) {
  **/
 void set_union(Set* first, Set* second) {
 
-    if (second != 0) {
-        insert_el(second->val, &first);
+    if (second->next != 0) {
+        insert_el(second->next->val, &first);
+
         set_union(first, second->next);
     }
 }
@@ -274,11 +284,6 @@ int set_contents_equality(Set* first, Set* second) {
 
     if (first != 0 && second != 0) {
 
-        // If first value false, return 0
-        if (!(value_equality(&(first->val), &(second->val)))) {
-           return 0; 
-        }
-
         // If reached the end of the sets without error, they're the same
         if (first->next == 0 && second->next == 0) {
             return 1;
@@ -366,20 +371,19 @@ int main(int argc, char** argv) {
     //---------------------------------
     // x1
     //---------------------------------
-    Value *x1 = (Value*) malloc( sizeof (Value) );
-    x1->val.s = 0;
-    x1->type = SET;
+    Value x1 = create_empty_value( SET );
+    create_set(&x1.val.s);
 
     for (i = 1; i <= 7; i++) {
         Value *temp = (Value*) malloc( sizeof (Value) );
         temp->val.i = i;
         temp->type = INTEGER;
-        insert_el(*temp, &x1->val.s);
+        insert_el(*temp, &(&x1)->val.s);
     }
 
-    insert_el(*x0, &x1->val.s);
+    insert_el(*x0, &(&x1)->val.s);
 
-    print_answer(1, x1);
+    print_answer(1, &x1);
 
     //---------------------------------
     // x2
@@ -387,11 +391,12 @@ int main(int argc, char** argv) {
 
     Value x1_1 = create_empty_value(INTEGER);
     (&x1_1)->val.i = 1;
-    Value pair_x1 = create_pair(x1_1, *x1);
+    Value pair_x1 = create_pair(x1_1, x1);
 
     Value x2 = create_empty_value(SET);
+    create_set(&x2.val.s);
 
-    insert_el(*x1, &(&x2)->val.s);
+    insert_el(x1, &(&x2)->val.s);
     insert_el(pair_x1, &(&x2)->val.s);
 
     print_answer(2, &x2);
@@ -400,7 +405,7 @@ int main(int argc, char** argv) {
     // x3
     //---------------------------------
     
-    Value x3 = create_pair(x2, *x1);
+    Value x3 = create_pair(x2, x1);
 
     print_answer(3, &x3);
 
@@ -409,6 +414,7 @@ int main(int argc, char** argv) {
     //---------------------------------
     
     Value x4 = create_empty_value(SET);
+    create_set(&x4.val.s);
 
     // Insert x3 into x4
     insert_el(x3, &(&x4)->val.s);
@@ -426,7 +432,7 @@ int main(int argc, char** argv) {
     x4_temp = x4;
 
     Value x1_set = create_empty_value(SET);
-    insert_el(*x1, &(&x1_set)->val.s);
+    insert_el(x1, &(&x1_set)->val.s);
 
     subtraction((&x4_temp)->val.s, (&x1_set)->val.s, 1);
 
@@ -438,18 +444,18 @@ int main(int argc, char** argv) {
    
     // Rebuild x4 to get around a pointer problem with x4_temp above
     x4_temp = create_empty_value(SET);
+    create_set(&x4_temp.val.s);
     insert_el(x3, &(&x4_temp)->val.s);
     set_union((&x4_temp)->val.s, (&x2)->val.s);
 
     // Assign memory for intersected set
-    Set* intersected = (Set*) malloc ( sizeof(Set) );
+    Set* intersected = 0;
+    create_set(&intersected);
 
     intersection((&x4_temp)->val.s, (&x1_set)->val.s, intersected, 1);
-    //Drop the head of the set (Horrific code)
-    intersected = intersected->next;
 
     printf("x6 = ");
-    print_set(intersected, 1);
+    print_set(intersected);
     printf(";\n");
 
     // free things
