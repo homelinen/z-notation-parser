@@ -111,9 +111,8 @@ void set_union(Set* first, Set* second) {
  *
  * first - The initial set and modified set, as first is modified in place
  * second - The set to compare against
- * head - bool value to determine if set is head or not
  */
-void subtraction(Set* first, Set* second, int head) {
+void subtraction(Set* first, Set* second) {
 
     if (first != 0 && second != 0) {
 
@@ -146,7 +145,7 @@ void subtraction(Set* first, Set* second, int head) {
                 }
             } while (sec_temp != 0);
             // Subtract all of the second elements from the next element
-            subtraction(first->next, second, 0);
+            subtraction(first->next, second);
         }
     }
 }
@@ -159,11 +158,10 @@ void subtraction(Set* first, Set* second, int head) {
  * first - First Set
  * second - Second Set
  * intersected - address to put the new set
- * head - unneeded
  *
  * Returns all the elements in first that are the same as those in second. These matching elements are placed in intersected.
  */
-void intersection(Set* first, Set* second, Set* intersected, int head) {
+void intersection(Set* first, Set* second, Set* intersected) {
 
     if (first != 0 && second != 0) {
 
@@ -189,7 +187,7 @@ void intersection(Set* first, Set* second, Set* intersected, int head) {
             } while (sec_temp != 0);
 
             // Find intersection for next
-            intersection(first->next, second, intersected, 0);
+            intersection(first->next, second, intersected);
         }
     }
 }

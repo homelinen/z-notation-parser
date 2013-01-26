@@ -46,8 +46,8 @@ void insert_el(Value key, Set **el);
 void print_set(Set*);
 void set_union(Set*, Set*);
 int set_contents_equality(Set*, Set*);
-void intersection(Set*, Set*, Set*, int);
-void subtraction(Set*, Set*, int);
+void intersection(Set*, Set*, Set*);
+void subtraction(Set*, Set*);
 
 /*
  * Value functions

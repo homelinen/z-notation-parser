@@ -101,7 +101,7 @@ int main(int argc, char** argv) {
     Value x1_set = create_empty_value(SET);
     insert_el(x1, &(&x1_set)->val.s);
 
-    subtraction((&x4_temp)->val.s, (&x1_set)->val.s, 1);
+    subtraction((&x4_temp)->val.s, (&x1_set)->val.s);
 
     print_answer(5, &x4_temp);
 
@@ -119,7 +119,7 @@ int main(int argc, char** argv) {
     Set* intersected = 0;
     create_set(&intersected);
 
-    intersection((&x4_temp)->val.s, (&x1_set)->val.s, intersected, 1);
+    intersection((&x4_temp)->val.s, (&x1_set)->val.s, intersected);
 
     printf("x6 = ");
     print_set(intersected);
