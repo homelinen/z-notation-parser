@@ -7,6 +7,7 @@
 * Refactor subtraction and intersection as code is close to identical.
 * Create a head for sets and a proper create\_set method. Using insert for
   creation is sloppy.
+* Modify int head parameters to use the internal flag of Sets
 
 ### Joe's Notes/Suggestions ###
 
