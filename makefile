@@ -5,7 +5,10 @@ LIB_H += set.h
 
 all: part-1-run
 
-part-1-run: pair.o set.o value.o
+part-1-run: z-notation
+	./part-1-run
+
+z-notation: pair.o set.o value.o
 	$(CC) $(CFLAGS) -o part-1-run z-notation-parser.c set.o pair.o value.o
 
 set.o: set.c
