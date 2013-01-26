@@ -338,6 +338,18 @@ int value_equality(Value* first, Value* second) {
     return 0;
 }
 
+/** 
+ * Print the answer for each task to spec
+ *
+ * Example
+ *   x1 = {1,2,3,4,5,6,7,8};
+ */
+void print_answer(int num, Value* val) {
+    printf("x%d = ", num);
+    print_type(val);
+    printf(";\n");
+}
+
 int main(int argc, char** argv) {
     int i;
 
@@ -349,7 +361,7 @@ int main(int argc, char** argv) {
     x0->val.i = 8;
     x0->type = INTEGER;
 
-    printf("x0 = %d\n", x0->val.i);
+    print_answer(0, x0);
 
     //---------------------------------
     // x1
@@ -366,9 +378,8 @@ int main(int argc, char** argv) {
     }
 
     insert_el(*x0, &x1->val.s);
-    printf("x1 = ");
-    print_type(x1);
-    printf("\n");
+
+    print_answer(1, x1);
 
     //---------------------------------
     // x2
@@ -386,9 +397,7 @@ int main(int argc, char** argv) {
     insert_el(*x1, &x2->val.s);
     insert_el(pair_x1, &x2->val.s);
 
-    printf("x2 = ");
-    print_type(x2);
-    printf("\n");
+    print_answer(2, x2);
 
     //---------------------------------
     // x3
@@ -396,9 +405,7 @@ int main(int argc, char** argv) {
     
     Value x3 = create_pair(*x2, *x1);
 
-    printf("x3 = ");
-    print_type(&x3);
-    printf("\n");
+    print_answer(3, &x3);
 
     //---------------------------------
     // x4
@@ -412,9 +419,7 @@ int main(int argc, char** argv) {
     // { x3 } U x2
     set_union((&x4)->val.s, x2->val.s);
 
-    printf("x4 = ");
-    print_type(&x4);
-    printf("\n");
+    print_answer(4, &x4);
 
     //---------------------------------
     // x5
@@ -428,9 +433,7 @@ int main(int argc, char** argv) {
 
     subtraction((&x4_temp)->val.s, (&x1_set)->val.s, 1);
 
-    printf("x5 = ");
-    print_type(&x4_temp);
-    printf("\n");
+    print_answer(5, &x4_temp);
 
     //---------------------------------
     // x6
@@ -450,7 +453,7 @@ int main(int argc, char** argv) {
 
     printf("x6 = ");
     print_set(intersected, 1);
-    printf("\n");
+    printf(";\n");
 
     // free things
     return 0;
