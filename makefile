@@ -1,5 +1,5 @@
 CC = cc
-CFLAGS = -g -Wall -std='c99'
+CFLAGS = -g -Wall
 
 LIB_H += set.h
 
