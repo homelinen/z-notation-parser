@@ -385,25 +385,22 @@ int main(int argc, char** argv) {
     // x2
     //---------------------------------
 
-    Value* x1_1 = (Value*) malloc ( sizeof (Value) );
-    x1_1->val.i = 1;
-    x1_1->type = INTEGER;
-    Value pair_x1 = create_pair(*x1_1, *x1);
+    Value x1_1 = create_empty_value(INTEGER);
+    (&x1_1)->val.i = 1;
+    Value pair_x1 = create_pair(x1_1, *x1);
 
-    Value *x2 = (Value*) malloc( sizeof (Value) );
-    x2->val.s = 0;
-    x2->type = SET;
+    Value x2 = create_empty_value(SET);
 
-    insert_el(*x1, &x2->val.s);
-    insert_el(pair_x1, &x2->val.s);
+    insert_el(*x1, &(&x2)->val.s);
+    insert_el(pair_x1, &(&x2)->val.s);
 
-    print_answer(2, x2);
+    print_answer(2, &x2);
 
     //---------------------------------
     // x3
     //---------------------------------
     
-    Value x3 = create_pair(*x2, *x1);
+    Value x3 = create_pair(x2, *x1);
 
     print_answer(3, &x3);
 
@@ -417,7 +414,7 @@ int main(int argc, char** argv) {
     insert_el(x3, &(&x4)->val.s);
 
     // { x3 } U x2
-    set_union((&x4)->val.s, x2->val.s);
+    set_union((&x4)->val.s, (&x2)->val.s);
 
     print_answer(4, &x4);
 
@@ -442,7 +439,7 @@ int main(int argc, char** argv) {
     // Rebuild x4 to get around a pointer problem with x4_temp above
     x4_temp = create_empty_value(SET);
     insert_el(x3, &(&x4_temp)->val.s);
-    set_union((&x4_temp)->val.s, x2->val.s);
+    set_union((&x4_temp)->val.s, (&x2)->val.s);
 
     // Assign memory for intersected set
     Set* intersected = (Set*) malloc ( sizeof(Set) );
