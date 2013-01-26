@@ -1,3 +1,11 @@
+/*
+ * set.c
+ *
+ * A Set structure and it's operations.
+ *
+ * A set has a possibly infinite number of elements and elements can always be added to them
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -7,6 +15,8 @@
 /**
  * Recurse through the Set freeing memory
  * from the end of the Set
+ *
+ * TODO: Make this not segfault
  **/
 void destroy_set(Set *el) {
     if (el == 0) {
@@ -17,6 +27,8 @@ void destroy_set(Set *el) {
 
 /**
  * Create the head of an empty set
+ *
+ * set_new - The new memory address is stored here
  */
 void create_set(Set **set_new) {
     *set_new = (Set*) malloc( sizeof ( Set ) );
@@ -30,17 +42,25 @@ void create_set(Set **set_new) {
  * Insert the key onto the end of the Set
  **/
 void insert_el(Value key, Set **el) {
+
     if (*el == 0) {
+        //If empty, at end of tree so create new element
         create_set (el);
         (*el)->val = key;
         (*el)->head = 0;
     } else if (*el != 0) {
+        // If not at the end, add one to the length and go to next
         insert_el(key, &((*el)->next));
         (*el)->length += 1;
     }
 }
+
 /**
- * Run through the Set and print the values
+ * Print out all the values stored in the set
+ *
+ * el - The set to be printed
+ *
+ * Prints the set in the form { el1, el2, ... }
  **/
 void print_set(Set *el) {
     if (el != 0) {
@@ -65,9 +85,14 @@ void print_set(Set *el) {
 
 /**
  * Create the union between the second set and first set
- * The first set is used to store the second
+ *
+ * first - The initial set and the set that second is appended to
+ *
+ * Returns the union in first, through pointers
  **/
 void set_union(Set* first, Set* second) {
+
+    //Assuming the head of the set is always non-zero
 
     if (second->next != 0) {
         insert_el(second->next->val, &first);
@@ -77,7 +102,11 @@ void set_union(Set* first, Set* second) {
 }
 
 /**
- * Remove the elements from set 2 that match those of set 1
+ * Find the elements in seconrd that are equal to those in first and remove them from first
+ *
+ * first - The initial set and modified set
+ * second - The set to compare against
+ * head - bool value to determine if set is head or not
  */
 void subtraction(Set* first, Set* second, int head) {
 
@@ -137,9 +166,6 @@ void intersection(Set* first, Set* second, Set* intersected, int head) {
         if (head) {
             if (value_equality(&(first->val), &(second->val))) {
                 // Only checking the heads of the set, need children as well
-
-                printf("\n");
-
                 insert_el(first->val, &intersected);
             }
         }
@@ -170,10 +196,16 @@ void intersection(Set* first, Set* second, Set* intersected, int head) {
         }
     }
 }
+
 /**
  * Check if two sets are equal
  *
- * Two sets are equal if their elements are equal
+ * Two sets are equal if all their elements are equal
+ *
+ * first - The first set
+ * second - The set to compare with first
+ *
+ * Returns a bool stating if the sets are equal or not
  */
 int set_contents_equality(Set* first, Set* second) {
 
@@ -191,5 +223,7 @@ int set_contents_equality(Set* first, Set* second) {
         }
     }
         
+    //If all else failed, they must not be equal
     return 0;
 }
+
