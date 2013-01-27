@@ -38,7 +38,7 @@
 \subsection{all.h}
 
 Contains all the structure definitions. Due to recursive dependencies
-the structures are all created together.
+the structures are all defined together.
 
 \subsection{constants.h}
 
@@ -61,37 +61,29 @@ Value.
 
 \texttt{value\_equality} Uses the underlying Value.type to determine the equality, using the type\_print method, defined by that structure.
 
-\texttt{print\_type} prints the type by type\_print method.
-
 \subsection{pair.c}
 
-The Pair struct has two child elements: left and right. Left and right.
+The Pair struct has two Value child elements: left and right. 
 
 \subsubsection{Methods}
 
 The \texttt{create\_pair} method creates a new Pair, with the left and right
 branches assigned and returns the Value representation of this new
-pair.o
+pair.
 
-The print\_pair method prints the two
-values, seperated by commas, and wraps them in round brackets.
-
-pair\_equality compares each side of the pair with the corresponding side of the second pair. Will not work for different ordered pairs.
+\texttt{pair\_equality} compares each side of the pair with the corresponding side of the second pair. Will not work for different ordered pairs.
 
 \subsection{set.c}
 
 The Set structure is implemented as a linked list, so every member of
 the set knows about it's following member, until you get to the end of
-the set.
+the set. A member in the list is a node with a next element and a stored Value.
 
 The \texttt{create\_set} function creates a new Set in
 memory and returns the address inside the set\_new argument.
 
 The \texttt{insert\_el} function adds new elements onto the end of the
 set. The set is recursed through and when the end is found, a new element with the Value of key is created. 
-
-The print\_set method takes a set and prints every element, seperated by
-a comma and surrounds with curly braces. Nested structures are printed using the print\_type function.
 
 \texttt{set\_contents\_equality} compares the contents of two sets.
 Every element in first is compared with the element in the same position
