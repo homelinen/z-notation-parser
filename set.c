@@ -197,6 +197,12 @@ void intersection(Set* first, Set* second, Set* intersected) {
  *
  * Two sets are equal if all their elements are equal
  *
+ * DOES NOT CHECK LENGTH OF SETS (Check externally)
+ * TODO: Make a set comparison method that checks length and contents
+ *
+ * If the second set is longer than the first, then those extra values go unchecked
+ * If something in the second set isn't in the first, the test could still pass. Bad.
+ *
  * first - The first set
  * second - The set to compare with first
  *
@@ -204,21 +210,46 @@ void intersection(Set* first, Set* second, Set* intersected) {
  */
 int set_contents_equality(Set* first, Set* second) {
 
+    int is_equal = 0;
+
     if (first != 0 && second != 0) {
 
-        // If reached the end of the sets without error, they're the same
-        if (first->next == 0 && second->next == 0) {
-            return 1;
-        }
+        if (first->next != 0) {
 
-        // Compare first set with the second
-        if (value_equality(&(first->next->val), &(second->next->val))) {
-            // Check the next elements in the set for equality
-            return set_contents_equality(first->next, second->next);
+            // Copy the second set
+            Set* sec_temp = (Set*) (malloc ( sizeof (Set) ));
+            *sec_temp = *second;
+
+            // Iterate through all of the second sets children
+            do {
+                // Check if the children are equal
+                if (value_equality(&(first->next->val), &(sec_temp->val))) {
+                    is_equal = 1;
+                }
+
+                if (sec_temp->next != 0) {
+                    *sec_temp = *(sec_temp->next);
+                } else {
+                    sec_temp = 0;
+                }
+            } while (!is_equal && sec_temp != 0);
+
+            if (is_equal) {
+                // Check the next in the sequence
+                return set_contents_equality(first->next, second);
+            } else {
+                //if first isn't equal to any second, not equal
+                return 0;
+            }
+
+            free(sec_temp);
+        } else {
+            // If reached the end of the sets without error, they're the same
+            return 1;
         }
     }
         
-    //If all else failed, they must not be equal
+    // Otherwise, must be false
     return 0;
 }
 

@@ -8,6 +8,7 @@
 * Create a head for sets and a proper create\_set method. Using insert for
   creation is sloppy.
 * Modify int head parameters to use the internal flag of Sets
+* Does not deal with duplicates
 
 ### Joe's Notes/Suggestions ###
 
