@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "lib/cJSON.h"
 
 #include "constants.h"
@@ -14,6 +15,53 @@
  *   //TODO: Set membership
  */
 
+/* Signitures */
+void parse_item(cJSON *item);
+
+/**
+ * Initial test for the parser
+ */
+void test_parse(cJSON *item) {
+
+    cJSON* operator = cJSON_GetObjectItem(item, "operator");
+    if (operator && strncmp(operator->valuestring, "equal", 80)==0) {
+        cJSON* args = cJSON_GetObjectItem(item, "arguments");
+
+        if (args) {
+            char* tempName;
+            Value val;
+
+            cJSON* subitem = args->child;
+
+            switch (subitem->type) {
+                case cJSON_Object:
+                    tempName = subitem->child->valuestring;
+                    break;
+                case cJSON_Number:
+                    val = create_empty_value(INTEGER);
+                    val.val.i = subitem->valueint;
+                    break;
+            }
+            subitem = subitem->next;
+            switch (subitem->type) {
+                case cJSON_Object:
+                    tempName = subitem->child->valuestring;
+                    break;
+                case cJSON_Number:
+                    val = create_empty_value(INTEGER);
+                    val.val.i = subitem->valueint;
+                    break;
+            }
+
+            Variable var = *(create_variable(tempName, &val));
+            printf("%s = ", var.name);
+            print_type(var.val);
+            printf(";\n");
+
+        }
+    }
+}
+
 /*
  * Iterates through the JSON Tree
  */
@@ -22,25 +70,27 @@ void parse_item(cJSON *item) {
     cJSON* subitem = item->child;
 
     while (subitem != 0) {
+        printf("Type: %s, ", subitem->string);
+        printf("val: ");
 
-        //parse
-            printf("Name: %s", subitem->string);
-            switch (subitem->type) {
-                case cJSON_String:
-                    printf(", value: %s\n", subitem->valuestring);
-                    break;
-                case cJSON_Number:
-                    printf(", value: %d\n", subitem->valueint);
-                    break;
-                default:
-                    printf("\n");
-            }
+        switch (subitem->type) {
+            case cJSON_Object:
+                break;
+            case cJSON_String:
+                printf("%s", subitem->valuestring);
+                break;
+            case cJSON_Number:
+                printf("%d", subitem->valueint);
+                break;
+        }
+        printf("\n");
 
         if (subitem->child) {
             parse_item(subitem);
         }
 
         subitem = subitem->next;
+        /*subitem=0;*/
     }
 }
 
@@ -85,7 +135,9 @@ int main (int argc, char** args) {
     }
 
     cJSON *root = cJSON_Parse(line);
-    parse_item(root);
+
+    /*parse_item(root->child);*/
+    test_parse(root->child->child->next);
 
     cJSON_Delete(root);
     fclose(f);
