@@ -13,8 +13,8 @@ part-1-run: z-notation
 z-notation: pair.o set.o value.o
 	$(CC) $(CFLAGS) -o part-1-run z-notation-parser.c set.o pair.o value.o
 
-file-reader: pair.o set.o value.o variable.o
-	$(CC) $(CFLAGS) file-reader.c $(INT_LIBS) set.o pair.o value.o variable.o $(LIBS) -o filereader
+file-reader: file-reader.c pair.o set.o value.o variable.o
+	$(CC) $(CFLAGS) file-reader.c $(INT_LIBS) set.o pair.o value.o variable.o $(LIBS) -o file-reader
 
 set.o: set.c
 	$(CC) $(CFLAGS) -c set.c
