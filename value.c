@@ -64,6 +64,23 @@ Value create_empty_value(int type) {
     return *new_val;
 }
 
+void destroy_value(Value* val) {
+    if (val != 0 && val != NULL) {
+        switch (val->type) {
+
+            case SET:
+                destroy_set(val->val.s);
+                break;
+            case PAIR:
+                destroy_pair(val->val.p);
+                break;
+            //Ignore ints
+        }
+        
+        free(val);
+    }
+}
+
 /**
  * Check if two Values are equal
  *

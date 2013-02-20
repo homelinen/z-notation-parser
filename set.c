@@ -19,9 +19,16 @@
  * TODO: Make this not segfault
  **/
 void destroy_set(Set *el) {
-    if (el == 0) {
-        destroy_set(el->next);
-        free(el);
+    // Check the set points somewhere
+    if (el != 0 && el != NULL) {
+        if (el->next != 0) {
+            destroy_set(el->next);
+        } 
+
+        if (!el->head) {
+            destroy_value(&el->val);
+        }
+        /*free(el);*/
     }
 }
 

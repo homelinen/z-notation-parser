@@ -28,6 +28,16 @@ Value create_pair(Value left, Value right) {
     return value_pair;
 }
 
+void destroy_pair(Pair* p) {
+    // Ensure p points to something
+    if (p != 0) {
+        destroy_value(&p->left);
+        destroy_value(&p->right);
+        free(p);
+
+    }
+}
+
 /**
  * Print each element in the pair to stdout
  *
