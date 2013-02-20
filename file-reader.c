@@ -2,6 +2,18 @@
 #include <stdlib.h>
 #include "lib/cJSON.h"
 
+#include "constants.h"
+#include "all.h"
+#include "variable.h"
+
+/*
+ * The operators used in the input file, and the struct equivalents are:
+ *   Equal: create_variable
+ *   set: create_value()->set
+ *   tuple: create_value()->pair
+ *   //TODO: Set membership
+ */
+
 /*
  * Iterates through the JSON Tree
  */
@@ -30,6 +42,13 @@ void parse_item(cJSON *item) {
 
         subitem = subitem->next;
     }
+}
+
+// TODO: Move this to a shared file
+void print_answer(int num, Value* val) {
+    printf("x%d = ", num);
+    print_type(val);
+    printf(";\n");
 }
 
 int main (int argc, char** args) {
