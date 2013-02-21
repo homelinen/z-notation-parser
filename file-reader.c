@@ -18,6 +18,34 @@
 /* Signitures */
 void parse_item(cJSON *item);
 
+void parse_type(cJSON* item, Variable* var) {
+
+    if (var) {
+        char* tempName = 0;
+        Value val;
+        int val_init = 0;
+
+        switch (item->type) {
+            case cJSON_Object:
+                tempName = item->child->valuestring;
+                break;
+            case cJSON_Number:
+                val = create_empty_value(INTEGER);
+                val.val.i = item->valueint;
+
+                val_init = 1;
+                break;
+        }
+
+        // Set up the variable fields
+        if (tempName) {
+            var->name = tempName;
+        } else if (val_init) {
+            *var->val = val;
+        }
+    }
+}
+
 /**
  * Initial test for the parser
  */
@@ -31,29 +59,15 @@ void test_parse(cJSON *item) {
             char* tempName;
             Value val;
 
+            Variable var = *(create_empty_variable());
+
             cJSON* subitem = args->child;
 
-            switch (subitem->type) {
-                case cJSON_Object:
-                    tempName = subitem->child->valuestring;
-                    break;
-                case cJSON_Number:
-                    val = create_empty_value(INTEGER);
-                    val.val.i = subitem->valueint;
-                    break;
-            }
-            subitem = subitem->next;
-            switch (subitem->type) {
-                case cJSON_Object:
-                    tempName = subitem->child->valuestring;
-                    break;
-                case cJSON_Number:
-                    val = create_empty_value(INTEGER);
-                    val.val.i = subitem->valueint;
-                    break;
-            }
+            parse_type(subitem, &var);
 
-            Variable var = *(create_variable(tempName, &val));
+            subitem = subitem->next;
+            parse_type(subitem, &var);
+
             printf("%s = ", var.name);
             print_type(var.val);
             printf(";\n");
@@ -137,7 +151,7 @@ int main (int argc, char** args) {
     cJSON *root = cJSON_Parse(line);
 
     /*parse_item(root->child);*/
-    test_parse(root->child->child->next);
+    test_parse(root->child->child);
 
     cJSON_Delete(root);
     fclose(f);
