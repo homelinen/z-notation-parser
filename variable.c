@@ -2,6 +2,7 @@
  * Simple Data structure for holding a variable
  */
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "all.h"
 #include "variable.h"
@@ -37,4 +38,14 @@ void destroy_variable(Variable* var) {
     free(var->val);
 
     free(var);
+}
+
+/*
+ * Print the variable as:
+ * {name} = {value}
+ */
+void print_variable(Variable* var) {
+    printf("%s = ", var->name);
+    print_type(var->val);
+    printf(";\n");
 }

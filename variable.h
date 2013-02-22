@@ -10,3 +10,4 @@ typedef struct {
 Variable* create_empty_variable();
 Variable* create_variable(char*, Value*);
 void destroy_variable(Variable*);
+void print_variable(Variable*);
