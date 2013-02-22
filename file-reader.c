@@ -15,8 +15,84 @@
  *   //TODO: Set membership
  */
 
+// Global array of variables (Messy)
+Variable* vars[20];
+
 /* Signitures */
-void parse_item(cJSON *item);
+//
+
+Value* find_variable(char* var) {
+    int i;
+    for (i = 0; i < 20; i++) {
+        if (strncmp(vars[i]->name, var, 30)) {
+            return vars[i]->val;
+        }
+    }
+}
+
+Value* parse_set_op(cJSON* arguments) {
+    
+    /* Traverse into the first child of the array */
+    cJSON* argument = arguments->child;
+
+    Value* val = create_empty_val(SET);
+    create_set(&val->val.s);
+
+    while (argument) {
+
+        if (argument->type == cJSON_Object) {
+            if (strncmp(argument->child->string, "variable", 30) == 0) {
+                /* 
+                 * Parse the variable into an expression 
+                 * Add the variable into the set
+                 */
+                insert_el(*find_variable(argument->child->string), &val->val.s);
+            }
+        }
+
+        argument = argument->next;
+    }
+
+    return val;
+}
+
+Value* parse_tuple_op(cJSON* arguments) {
+    
+    /* Traverse into the first child of the array */
+    cJSON* argument = arguments->child;
+
+    Value* val = create_empty_pair();
+
+    while (argument) {
+
+        if (argument->type == cJSON_Object) {
+            if (strncmp(argument->child->string, "variable", 30) == 0) {
+                /* 
+                 * Parse the variable into an expression 
+                 * Add the variable into the set
+                 */
+                insert_el(*find_variable(argument->child->string), &val->val.s);
+            }
+        } else if (argument->type == cJSON_Number) {
+            Value* val_int = create_empty_val(INTEGER);
+            val_int->val.i = argument->valueint;
+
+            if(val->val.p->left == 0) {
+                val->val.p->left = *val_int;
+            } else if (val->val.p->right == 0) {
+                val->val.p->left = *val_int;
+            } else {
+                printf("Tuple can only have two values\n");
+            }
+
+            destroy_value(val_int);
+        }
+
+        argument = argument->next;
+    }
+
+    return val;
+}
 
 Variable* parse_equal_op(cJSON* arguments) {
     cJSON* argument = arguments->child;
@@ -33,6 +109,9 @@ Variable* parse_equal_op(cJSON* arguments) {
 
             } else if (strncmp(argument->child->string, "operator", 30) == 0) {
                 /* Parse new operator, to something */
+                if (strncmp(argument->child->valuestring, "set", 30)) {
+                    *var->val = *parse_set_op(argument->child->next);
+                }
 
             }
             
@@ -55,13 +134,7 @@ Variable* parse_equal_op(cJSON* arguments) {
  */
 void parse_operator(cJSON *item) {
 
-    Variable* vars[20];
     int i = 0;
-    for (i = 0; i < 20; i++) {
-        vars[i] = 0;
-    }
-
-    i = 0;
     while(item) {
         /* Find the operator, then find it's arguments */
         cJSON* operator = cJSON_GetObjectItem(item, "operator");
@@ -131,6 +204,12 @@ int main (int argc, char** args) {
             fclose(f);
             exit(2);
         }
+    }
+
+    // Initialise Global Vars;
+    i = 0;
+    for (i = 0; i < 20; i++) {
+        vars[i] = 0;
     }
 
     cJSON *root = cJSON_Parse(line);
