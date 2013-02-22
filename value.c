@@ -64,6 +64,30 @@ Value create_empty_value(int type) {
     return *new_val;
 }
 
+/*
+ * Return a pointer to the value rather than an object (as above(
+ */
+Value* create_empty_val(int type) {
+    Value* new_val = (Value*) malloc ( sizeof (Value) );
+    switch (type) {
+
+        case SET:
+            new_val->val.s = 0;
+            new_val->type = SET;
+            break;
+        case INTEGER:
+            new_val->val.i = 0;
+            new_val->type = INTEGER;
+            break;
+        case PAIR:
+            new_val->val.p = 0;
+            new_val->type = PAIR;
+            break;
+    }
+
+    return new_val;
+}
+
 void destroy_value(Value* val) {
     if (val != 0 && val != NULL) {
         switch (val->type) {

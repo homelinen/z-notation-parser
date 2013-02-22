@@ -28,6 +28,16 @@ Value create_pair(Value left, Value right) {
     return value_pair;
 }
 
+Value* create_empty_pair() {
+    Value* value_pair = create_empty_val(PAIR);
+    Pair* p = (Pair*) malloc( sizeof( Pair ) );
+    p->left;
+    p->right;
+    value_pair->val.p = p;
+
+    return value_pair;
+}
+
 void destroy_pair(Pair* p) {
     // Ensure p points to something
     if (p != 0) {

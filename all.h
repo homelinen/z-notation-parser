@@ -54,6 +54,7 @@ void subtraction(Set*, Set*);
  * Value functions
  */
 Value create_empty_value(int);
+Value* create_empty_val(int);
 void destroy_value(Value*); 
 void print_type(Value*);
 int value_equality(Value*, Value*);
@@ -63,6 +64,7 @@ int value_equality(Value*, Value*);
  */
 void print_pair(Pair*);
 Value create_pair(Value, Value);
+Value* create_empty_pair(); 
 void destroy_pair(Pair*); 
 int pair_equality(Pair*, Pair*);
 
