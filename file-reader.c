@@ -18,93 +18,78 @@
 /* Signitures */
 void parse_item(cJSON *item);
 
-void parse_type(cJSON* item, Variable* var) {
+Variable* parse_equal_op(cJSON* arguments) {
+    cJSON* argument = arguments->child;
 
-    if (var) {
-        char* tempName = 0;
-        Value val;
-        int val_init = 0;
+    Variable* var = create_empty_variable();
 
-        switch (item->type) {
-            case cJSON_Object:
-                tempName = item->child->valuestring;
-                break;
-            case cJSON_Number:
-                val = create_empty_value(INTEGER);
-                val.val.i = item->valueint;
+    while (argument) {
 
-                val_init = 1;
-                break;
+        if (argument->type == cJSON_Object) {
+            if (strncmp(argument->child->string, "variable", 30) == 0) {
+                /* Set Variable Name */
+
+                var->name = argument->child->valuestring;
+
+            } else if (strncmp(argument->child->string, "operator", 30) == 0) {
+                /* Parse new operator, to something */
+
+            }
+            
+        } else if (argument->type == cJSON_Number) {
+            /* If there is more than one number, probably a set */
+
+            Value value = create_empty_value(INTEGER);
+            value.val.i = argument->valueint;
+            *var->val = value;
         }
 
-        // Set up the variable fields
-        if (tempName) {
-            var->name = tempName;
-        } else if (val_init) {
-            *var->val = val;
-        }
+        argument = argument->next;
     }
-}
 
-/**
- * Initial test for the parser
- */
-void test_parse(cJSON *item) {
-
-    cJSON* operator = cJSON_GetObjectItem(item, "operator");
-    if (operator && strncmp(operator->valuestring, "equal", 80)==0) {
-        cJSON* args = cJSON_GetObjectItem(item, "arguments");
-
-        if (args) {
-            char* tempName;
-            Value val;
-
-            Variable var = *(create_empty_variable());
-
-            cJSON* subitem = args->child;
-
-            parse_type(subitem, &var);
-
-            subitem = subitem->next;
-            parse_type(subitem, &var);
-
-            printf("%s = ", var.name);
-            print_type(var.val);
-            printf(";\n");
-
-        }
-    }
+    return var;
 }
 
 /*
  * Iterates through the JSON Tree
  */
-void parse_item(cJSON *item) {
+void parse_operator(cJSON *item) {
 
-    cJSON* subitem = item->child;
+    Variable* vars[20];
+    int i = 0;
+    for (i = 0; i < 20; i++) {
+        vars[i] = 0;
+    }
 
-    while (subitem != 0) {
-        printf("Type: %s, ", subitem->string);
-        printf("val: ");
+    i = 0;
+    while(item) {
+        /* Find the operator, then find it's arguments */
+        cJSON* operator = cJSON_GetObjectItem(item, "operator");
 
-        switch (subitem->type) {
-            case cJSON_Object:
-                break;
-            case cJSON_String:
-                printf("%s", subitem->valuestring);
-                break;
-            case cJSON_Number:
-                printf("%d", subitem->valueint);
-                break;
+        /* Get the arguments array */
+        cJSON* arguments = cJSON_GetObjectItem(item, "arguments");
+
+        if (strncmp(operator->valuestring, "equal", 30) == 0) {
+            /* Apply the second argument to the first */
+            vars[i] = parse_equal_op(arguments);
+        } else {
+            printf("Undefined op\n");
+            break;
         }
-        printf("\n");
 
-        if (subitem->child) {
-            parse_item(subitem);
+        // Try the next item in the array
+        item = item->next;
+        i++;
+    }
+
+    int j = 0;
+    for (j = 0; j < i; j++) {
+        if (vars[j]) {
+            print_variable(vars[j]);
+        } else {
+            // If the position is empty, don't bother
+            break;
         }
-
-        subitem = subitem->next;
-        /*subitem=0;*/
     }
 }
 
@@ -151,7 +136,8 @@ int main (int argc, char** args) {
     cJSON *root = cJSON_Parse(line);
 
     /*parse_item(root->child);*/
-    test_parse(root->child->child);
+    /*test_parse(root->child->child);*/
+    parse_operator(root->child->child);
 
     cJSON_Delete(root);
     fclose(f);
