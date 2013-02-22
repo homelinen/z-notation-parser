@@ -32,7 +32,9 @@ Variable* create_variable(char* name, Value* val) {
  */
 void destroy_variable(Variable* var) {
     free(var->name);
+    //FIXME: This will still leave memory kicking about
     //destroy_value(val)
+    free(var->val);
 
     free(var);
 }
