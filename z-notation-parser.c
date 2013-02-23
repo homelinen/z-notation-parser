@@ -62,7 +62,7 @@ int main(int argc, char** argv) {
 
     Value x1_1 = create_empty_value(INTEGER);
     (&x1_1)->val.i = 1;
-    Value pair_x1 = create_pair(x1_1, x1);
+    Value pair_x1 = create_pair(&x1_1, &x1);
 
     Value x2 = create_empty_value(SET);
     create_set(&x2.val.s);
@@ -77,7 +77,7 @@ int main(int argc, char** argv) {
     //---------------------------------
     
     // (x2, x1)
-    Value x3 = create_pair(x2, x1);
+    Value x3 = create_pair(&x2, &x1);
 
     print_answer(3, &x3);
 

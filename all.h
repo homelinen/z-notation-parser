@@ -25,8 +25,8 @@ struct _Value {
 };
 
 struct _Pair {
-    Value left;
-    Value right;
+    Value* left;
+    Value* right;
 };
 
 struct _Set {
@@ -63,7 +63,7 @@ int value_equality(Value*, Value*);
  * Pair functions
  */
 void print_pair(Pair*);
-Value create_pair(Value, Value);
+Value create_pair(Value*, Value*);
 Value* create_empty_pair(); 
 void destroy_pair(Pair*); 
 int pair_equality(Pair*, Pair*);
