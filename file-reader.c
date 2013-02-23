@@ -77,7 +77,6 @@ Value* parse_base_type(cJSON* argument) {
                 val_temp = parse_member_op(argument->child->next);
             } else if (strncmp(argument->child->valuestring, "equal", 30) == 0) {
                 // Equals in an equals is an equality operation
-                printf("Hello Mister nice method\n");
                 val_temp = parse_equality_op(argument->child->next);
             }
         }
@@ -186,7 +185,6 @@ Variable* parse_equal_op(cJSON* arguments) {
                     *var->val = *parse_member_op(argument->child->next);
                 } else if (strncmp(argument->child->valuestring, "equal", 30) == 0) {
                     // Equals in an equals is an equality operation
-                    printf("Hello Mrs Bad Lady\n");
                     *var->val = *parse_equality_op(argument->child->next);
                 }
             }
