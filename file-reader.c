@@ -16,14 +16,14 @@
  */
 
 // Global array of variables (Messy)
-Variable* vars[20];
+Variable* vars[25];
 
 /* Signitures */
 //
 
 Value* find_variable(char* var) {
     int i;
-    for (i = 0; i < 20; i++) {
+    for (i = 0; i < 25; i++) {
         if (vars[i] && strncmp(vars[i]->name, var, 30) == 0) {
             return vars[i]->val;
         }
@@ -273,7 +273,7 @@ int main (int argc, char** args) {
 
     // Initialise Global Vars;
     i = 0;
-    for (i = 0; i < 20; i++) {
+    for (i = 0; i < 25; i++) {
         vars[i] = 0;
     }
 
