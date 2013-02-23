@@ -5,16 +5,19 @@ LIB_PATH=lib
 INT_LIBS=$(LIB_PATH)/cJSON.c
 LIBS=-lm
 
-all: part-1-run
+all: part-1-run part-2-run
 
-part-1-run: z-notation
+part-1-run: part-1
 	./part-1-run
 
-z-notation: pair.o set.o value.o
-	$(CC) $(CFLAGS) -o part-1-run z-notation-parser.c set.o pair.o value.o
+part-2-run: part-2
+	./part-2-run
 
-file-reader: file-reader.c pair.o set.o value.o variable.o
-	$(CC) $(CFLAGS) file-reader.c $(INT_LIBS) set.o pair.o value.o variable.o $(LIBS) -o file-reader
+part-1: pair.o set.o value.o
+	$(CC) $(CFLAGS) -o part-1-run part-1.c set.o pair.o value.o
+
+part-2: part-2.c pair.o set.o value.o variable.o
+	$(CC) $(CFLAGS) part-2.c $(INT_LIBS) set.o pair.o value.o variable.o $(LIBS) -o part-2-run
 
 set.o: set.c
 	$(CC) $(CFLAGS) -c set.c
