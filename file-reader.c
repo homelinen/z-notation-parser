@@ -85,10 +85,8 @@ Value* parse_tuple_op(cJSON* arguments) {
         }
 
         if(val->val.p->left == 0) {
-            printf("Left\n");
             val->val.p->left = val_temp;
         } else if (val->val.p->right == 0) {
-            printf("Right\n");
             val->val.p->right = val_temp;
         } else {
             printf("Tuple can only have two values\n");
