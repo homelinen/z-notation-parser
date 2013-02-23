@@ -19,7 +19,12 @@
 Variable* vars[25];
 
 /* Signitures */
-//
+Value* parse_base_type(cJSON*);
+Value* parse_equality_op(cJSON*);
+Variable* parse_equal_op(cJSON*);
+Value* parse_member_op(cJSON*);
+Value* parse_tuple_op(cJSON*);
+Value* find_variable(char*);
 
 Value* find_variable(char* var) {
     int i;
@@ -44,24 +49,44 @@ Value* parse_set_op(cJSON* arguments) {
 
     while (argument) {
 
-        if (argument->type == cJSON_Object) {
-            if (strncmp(argument->child->string, "variable", 30) == 0) {
-                /* 
-                 * Parse the variable into an expression 
-                 * Add the variable into the set
-                 */
-                val_temp = find_variable(argument->child->valuestring);
-            }
-        } else if (argument->type == cJSON_Number) {
-            val_temp = create_empty_val(INTEGER);
-            val_temp->val.i = argument->valueint;
-        }
+        val_temp = parse_base_type(argument);
 
         insert_el(*val_temp, &val->val.s);
         argument = argument->next;
     }
 
     return val;
+}
+
+/**
+ * Look through the different types in an abstracted recursive way
+ */
+Value* parse_base_type(cJSON* argument) {
+
+    Value* val_temp = 0;
+    if (argument->type == cJSON_Object) {
+        if (strncmp(argument->child->string, "variable", 30) == 0) {
+            val_temp = find_variable(argument->child->valuestring);
+        } else if (strncmp(argument->child->string, "operator", 30) == 0) {
+            /* Parse new operator, to something */
+            if (strncmp(argument->child->valuestring, "set", 30) == 0) {
+                val_temp = parse_set_op(argument->child->next);
+            } else if (strncmp(argument->child->valuestring, "tuple", 30) == 0) {
+                val_temp = parse_tuple_op(argument->child->next);
+            } else if (strncmp(argument->child->valuestring, "member", 30) == 0) {
+                val_temp = parse_member_op(argument->child->next);
+            } else if (strncmp(argument->child->valuestring, "equal", 30) == 0) {
+                // Equals in an equals is an equality operation
+                printf("Hello Mister nice method\n");
+                val_temp = parse_equality_op(argument->child->next);
+            }
+        }
+    } else if (argument->type == cJSON_Number) {
+        val_temp = create_empty_val(INTEGER);
+        val_temp->val.i = argument->valueint;
+    }
+
+    return val_temp;
 }
 
 Value* parse_tuple_op(cJSON* arguments) {
@@ -74,15 +99,7 @@ Value* parse_tuple_op(cJSON* arguments) {
 
     while (argument) {
 
-        if (argument->type == cJSON_Object) {
-            if (strncmp(argument->child->string, "variable", 30) == 0) {
-                val_temp = find_variable(argument->child->valuestring);
-            }
-        } else if (argument->type == cJSON_Number) {
-            val_temp = create_empty_val(INTEGER);
-            val_temp->val.i = argument->valueint;
-
-        }
+        val_temp = parse_base_type(argument);
 
         if(val->val.p->left == 0) {
             val->val.p->left = val_temp;
@@ -100,7 +117,6 @@ Value* parse_tuple_op(cJSON* arguments) {
 
 Value* parse_member_op(cJSON* args) {
 
-
     /* Traverse into the first child of the array */
     cJSON* argument = args->child;
 
@@ -111,27 +127,15 @@ Value* parse_member_op(cJSON* args) {
 
     if (argument && argument->next) {
 
-        /* The first argument of the membership */
-        if (argument->type == cJSON_Object) {
-            if (strncmp(argument->child->string, "variable", 30) == 0) {
-                val_temp = find_variable(argument->child->valuestring);
-            }
-        } 
-
+        val_temp = parse_base_type(argument);
         argument = argument->next;
 
-        /* The second argument of the membership */
-        if (argument->type == cJSON_Object) {
-            if (strncmp(argument->child->string, "variable", 30) == 0) {
-                set_temp = find_variable(argument->child->valuestring);
-            }
-        } 
+        set_temp = parse_base_type(argument);
 
         value->val.i = set_membership(*val_temp, *set_temp->val.s);
     } else {
         value->val.i = 0;
     }
-
     
     return value;
 }
@@ -143,21 +147,16 @@ Value* parse_equality_op(cJSON* arguments) {
     Value* val_temp = 0;
 
     while (argument) {
-        if (argument->type == cJSON_Object) {
-            if (strncmp(argument->child->string, "variable", 30) == 0) {
-                if (val_temp) {
-                    val_temp->val.i = 
-                        value_equality(
-                            val_temp, find_variable(argument->child->valuestring)
-                        );
-                    val_temp->type = INTEGER;
-                } else {
-                    val_temp = create_empty_val(SET);
-
-                    *val_temp = *find_variable(argument->child->valuestring);
-                }
-            }
-        } 
+        if (val_temp) {
+            val_temp->val.i = 
+                value_equality(
+                    val_temp, parse_base_type(argument)
+                );
+            val_temp->type = INTEGER;
+        } else {
+            val_temp = create_empty_val(SET);
+            *val_temp = *parse_base_type(argument);
+        }
         
         argument = argument->next;
     }
@@ -187,6 +186,7 @@ Variable* parse_equal_op(cJSON* arguments) {
                     *var->val = *parse_member_op(argument->child->next);
                 } else if (strncmp(argument->child->valuestring, "equal", 30) == 0) {
                     // Equals in an equals is an equality operation
+                    printf("Hello Mrs Bad Lady\n");
                     *var->val = *parse_equality_op(argument->child->next);
                 }
             }
@@ -240,7 +240,7 @@ void print_answer(int num, Value* val, FILE* f) {
 
 int main (int argc, char** args) {
 
-    FILE* f = fopen("simple-input.json", "r");
+    FILE* f = fopen("input.json", "r");
 
     // Check file
     if (f == 0) {
@@ -277,7 +277,9 @@ int main (int argc, char** args) {
         vars[i] = 0;
     }
 
-    FILE* fpo = fopen("simple-output.txt", "w");
+    /*FILE* fpo = fopen("simple-output.txt", "w");*/
+    FILE* fpo = stdout;
+
     cJSON *root = cJSON_Parse(line);
 
     // Main parsing op
