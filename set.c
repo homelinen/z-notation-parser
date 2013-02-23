@@ -200,6 +200,27 @@ void intersection(Set* first, Set* second, Set* intersected) {
 }
 
 /**
+ * Check if an element exists in the set
+ */
+int set_membership(Value element, Set set) {
+
+    Set* set_temp = set.next;
+    int found = 0;
+
+    while (set_temp && !found) {
+        if (value_equality(&element, &set_temp->val)) {
+            found =  1;
+        } else {
+            set_membership(element, *set.next);
+        }
+
+        set_temp = set_temp->next;
+    }
+
+    return found;
+}
+
+/**
  * Check if two sets are equal
  *
  * Two sets are equal if all their elements are equal
@@ -207,6 +228,7 @@ void intersection(Set* first, Set* second, Set* intersected) {
  * DOES NOT CHECK LENGTH OF SETS (Check externally)
  * TODO: Make a set comparison method that checks length and contents
  *
+ 
  * If the second set is longer than the first, then those extra values go unchecked
  * If something in the second set isn't in the first, the test could still pass. Bad.
  *

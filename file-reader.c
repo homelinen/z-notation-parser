@@ -101,6 +101,44 @@ Value* parse_tuple_op(cJSON* arguments) {
     return val;
 }
 
+Value* parse_member_op(cJSON* args) {
+
+
+    /* Traverse into the first child of the array */
+    cJSON* argument = args->child;
+
+    Value* set_temp = 0;
+    Value* value = create_empty_val(INTEGER);
+
+    Value* val_temp = 0;
+
+    if (argument && argument->next) {
+
+        /* The first argument of the membership */
+        if (argument->type == cJSON_Object) {
+            if (strncmp(argument->child->string, "variable", 30) == 0) {
+                val_temp = find_variable(argument->child->valuestring);
+            }
+        } 
+
+        argument = argument->next;
+
+        /* The second argument of the membership */
+        if (argument->type == cJSON_Object) {
+            if (strncmp(argument->child->string, "variable", 30) == 0) {
+                set_temp = find_variable(argument->child->valuestring);
+            }
+        } 
+
+        value->val.i = set_membership(*val_temp, *set_temp->val.s);
+    } else {
+        value->val.i = 0;
+    }
+
+    
+    return value;
+}
+
 Variable* parse_equal_op(cJSON* arguments) {
     cJSON* argument = arguments->child;
 
@@ -119,8 +157,9 @@ Variable* parse_equal_op(cJSON* arguments) {
                     *var->val = *parse_set_op(argument->child->next);
                 } else if (strncmp(argument->child->valuestring, "tuple", 30) == 0) {
                     *var->val = *parse_tuple_op(argument->child->next);
+                } else if (strncmp(argument->child->valuestring, "member", 30) == 0) {
+                    *var->val = *parse_member_op(argument->child->next);
                 }
-                
             }
         } else if (argument->type == cJSON_Number) {
             /* If there is more than one number, probably a set */

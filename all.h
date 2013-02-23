@@ -46,6 +46,7 @@ void destroy_set(Set*);
 void insert_el(Value key, Set **el);
 void print_set(Set*);
 void set_union(Set*, Set*);
+int set_membership(Value element, Set set);
 int set_contents_equality(Set*, Set*);
 void intersection(Set*, Set*, Set*);
 void subtraction(Set*, Set*);
