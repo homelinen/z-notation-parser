@@ -40,6 +40,8 @@ Value* parse_set_op(cJSON* arguments) {
     Value* val = create_empty_val(SET);
     create_set(&val->val.s);
 
+    Value* val_temp = 0;
+
     while (argument) {
 
         if (argument->type == cJSON_Object) {
@@ -48,10 +50,14 @@ Value* parse_set_op(cJSON* arguments) {
                  * Parse the variable into an expression 
                  * Add the variable into the set
                  */
-                insert_el(*find_variable(argument->child->valuestring), &val->val.s);
+                val_temp = find_variable(argument->child->valuestring);
             }
+        } else if (argument->type == cJSON_Number) {
+            val_temp = create_empty_val(INTEGER);
+            val_temp->val.i = argument->valueint;
         }
 
+        insert_el(*val_temp, &val->val.s);
         argument = argument->next;
     }
 
