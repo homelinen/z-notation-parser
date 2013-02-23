@@ -275,8 +275,8 @@ int main (int argc, char** args) {
         vars[i] = 0;
     }
 
-    /*FILE* fpo = fopen("simple-output.txt", "w");*/
-    FILE* fpo = stdout;
+    FILE* fpo = fopen("simple-output.txt", "w");
+    /*FILE* fpo = stdout;*/
 
     cJSON *root = cJSON_Parse(line);
 
@@ -296,5 +296,6 @@ int main (int argc, char** args) {
 
     cJSON_Delete(root);
     fclose(f);
+    fclose(fpo);
     return 0;
 }
