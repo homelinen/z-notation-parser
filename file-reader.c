@@ -24,10 +24,12 @@ Variable* vars[20];
 Value* find_variable(char* var) {
     int i;
     for (i = 0; i < 20; i++) {
-        if (strncmp(vars[i]->name, var, 30)) {
+        if (vars[i] && strncmp(vars[i]->name, var, 30) == 0) {
             return vars[i]->val;
         }
     }
+
+    return 0;
 }
 
 Value* parse_set_op(cJSON* arguments) {
@@ -46,7 +48,7 @@ Value* parse_set_op(cJSON* arguments) {
                  * Parse the variable into an expression 
                  * Add the variable into the set
                  */
-                insert_el(*find_variable(argument->child->string), &val->val.s);
+                insert_el(*find_variable(argument->child->valuestring), &val->val.s);
             }
         }
 
@@ -62,31 +64,30 @@ Value* parse_tuple_op(cJSON* arguments) {
     cJSON* argument = arguments->child;
 
     Value* val = create_empty_pair();
+    Value* val_temp = 0;
 
     while (argument) {
 
         if (argument->type == cJSON_Object) {
             if (strncmp(argument->child->string, "variable", 30) == 0) {
-                /* 
-                 * Parse the variable into an expression 
-                 * Add the variable into the set
-                 */
-                insert_el(*find_variable(argument->child->string), &val->val.s);
+                val_temp = find_variable(argument->child->valuestring);
             }
         } else if (argument->type == cJSON_Number) {
-            Value* val_int = create_empty_val(INTEGER);
-            val_int->val.i = argument->valueint;
+            val_temp = create_empty_val(INTEGER);
+            val_temp->val.i = argument->valueint;
 
-            if(val->val.p->left == 0) {
-                val->val.p->left = *val_int;
-            } else if (val->val.p->right == 0) {
-                val->val.p->left = *val_int;
-            } else {
-                printf("Tuple can only have two values\n");
-            }
-
-            destroy_value(val_int);
         }
+
+        if(val->val.p->left == 0) {
+            printf("Left\n");
+            val->val.p->left = val_temp;
+        } else if (val->val.p->right == 0) {
+            printf("Right\n");
+            val->val.p->left = val_temp;
+        } else {
+            printf("Tuple can only have two values\n");
+        }
+
 
         argument = argument->next;
     }
@@ -100,7 +101,6 @@ Variable* parse_equal_op(cJSON* arguments) {
     Variable* var = create_empty_variable();
 
     while (argument) {
-
         if (argument->type == cJSON_Object) {
             if (strncmp(argument->child->string, "variable", 30) == 0) {
                 /* Set Variable Name */
@@ -109,12 +109,13 @@ Variable* parse_equal_op(cJSON* arguments) {
 
             } else if (strncmp(argument->child->string, "operator", 30) == 0) {
                 /* Parse new operator, to something */
-                if (strncmp(argument->child->valuestring, "set", 30)) {
+                if (strncmp(argument->child->valuestring, "set", 30) == 0) {
                     *var->val = *parse_set_op(argument->child->next);
+                } else if (strncmp(argument->child->valuestring, "tuple", 30) == 0) {
+                    *var->val = *parse_tuple_op(argument->child->next);
                 }
-
+                
             }
-            
         } else if (argument->type == cJSON_Number) {
             /* If there is more than one number, probably a set */
 
@@ -122,7 +123,7 @@ Variable* parse_equal_op(cJSON* arguments) {
             value.val.i = argument->valueint;
             *var->val = value;
         }
-
+        
         argument = argument->next;
     }
 
