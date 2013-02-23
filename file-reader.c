@@ -92,7 +92,6 @@ Value* parse_tuple_op(cJSON* arguments) {
             printf("Tuple can only have two values\n");
         }
 
-
         argument = argument->next;
     }
 
@@ -137,6 +136,35 @@ Value* parse_member_op(cJSON* args) {
     return value;
 }
 
+Value* parse_equality_op(cJSON* arguments) {
+
+    cJSON* argument = arguments->child;
+
+    Value* val_temp = 0;
+
+    while (argument) {
+        if (argument->type == cJSON_Object) {
+            if (strncmp(argument->child->string, "variable", 30) == 0) {
+                if (val_temp) {
+                    val_temp->val.i = 
+                        value_equality(
+                            val_temp, find_variable(argument->child->valuestring)
+                        );
+                    val_temp->type = INTEGER;
+                } else {
+                    val_temp = create_empty_val(SET);
+
+                    *val_temp = *find_variable(argument->child->valuestring);
+                }
+            }
+        } 
+        
+        argument = argument->next;
+    }
+
+    return val_temp;
+}
+
 Variable* parse_equal_op(cJSON* arguments) {
     cJSON* argument = arguments->child;
 
@@ -157,6 +185,9 @@ Variable* parse_equal_op(cJSON* arguments) {
                     *var->val = *parse_tuple_op(argument->child->next);
                 } else if (strncmp(argument->child->valuestring, "member", 30) == 0) {
                     *var->val = *parse_member_op(argument->child->next);
+                } else if (strncmp(argument->child->valuestring, "equal", 30) == 0) {
+                    // Equals in an equals is an equality operation
+                    *var->val = *parse_equality_op(argument->child->next);
                 }
             }
         } else if (argument->type == cJSON_Number) {
