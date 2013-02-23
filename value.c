@@ -18,21 +18,21 @@
  *
  * If type isn't defined, print address
  */
-void print_type(Value* val) {
+void print_type(Value* val, FILE* f) {
     
     if (val) {
         switch (val->type) {
             case INTEGER: 
-                printf("%d", val->val.i);
+                fprintf(f, "%d", val->val.i);
                 break;
             case SET:
-                print_set(val->val.s);
+                print_set(val->val.s, f);
                 break;
             case PAIR:
-                print_pair(val->val.p);
+                print_pair(val->val.p, f);
                 break;
             default:
-                printf("%p", val);
+                fprintf(f, "%p", val);
                 break;
         }
     } else {

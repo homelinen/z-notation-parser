@@ -19,14 +19,16 @@
  * Example
  *   x1 = {1,2,3,4,5,6,7,8};
  */
-void print_answer(int num, Value* val) {
+void print_answer(int num, Value* val, FILE* f) {
     printf("x%d = ", num);
-    print_type(val);
+    print_type(val, f);
     printf(";\n");
 }
 
 int main(int argc, char** argv) {
     int i;
+
+    FILE* fpo = stdout;
 
     //---------------------------------
     // x0
@@ -36,7 +38,7 @@ int main(int argc, char** argv) {
     x0->val.i = 8;
     x0->type = INTEGER;
 
-    print_answer(0, x0);
+    print_answer(0, x0, fpo);
 
     //---------------------------------
     // x1
@@ -54,7 +56,7 @@ int main(int argc, char** argv) {
 
     insert_el(*x0, &(&x1)->val.s);
 
-    print_answer(1, &x1);
+    print_answer(1, &x1, fpo);
 
     //---------------------------------
     // x2
@@ -70,7 +72,7 @@ int main(int argc, char** argv) {
     insert_el(x1, &(&x2)->val.s);
     insert_el(pair_x1, &(&x2)->val.s);
 
-    print_answer(2, &x2);
+    print_answer(2, &x2, fpo);
 
     //---------------------------------
     // x3
@@ -79,7 +81,7 @@ int main(int argc, char** argv) {
     // (x2, x1)
     Value x3 = create_pair(&x2, &x1);
 
-    print_answer(3, &x3);
+    print_answer(3, &x3, fpo);
 
     //---------------------------------
     // x4
@@ -95,7 +97,7 @@ int main(int argc, char** argv) {
     // { x3 } U x2
     set_union((&x4)->val.s, (&x2)->val.s);
 
-    print_answer(4, &x4);
+    print_answer(4, &x4, fpo);
 
     //---------------------------------
     // x5
@@ -109,7 +111,7 @@ int main(int argc, char** argv) {
 
     subtraction((&x4_temp)->val.s, (&x1_set)->val.s);
 
-    print_answer(5, &x4_temp);
+    print_answer(5, &x4_temp, fpo);
 
     //---------------------------------
     // x6
@@ -127,9 +129,9 @@ int main(int argc, char** argv) {
 
     intersection((&x4_temp)->val.s, (&x1_set)->val.s, intersected);
 
-    printf("x6 = ");
-    print_set(intersected);
-    printf(";\n");
+    fprintf(fpo, "x6 = ");
+    print_set(intersected, fpo);
+    fprintf(fpo, ";\n");
 
     // free things
 

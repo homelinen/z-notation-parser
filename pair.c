@@ -54,13 +54,13 @@ void destroy_pair(Pair* p) {
  * Prints in the form 
  *   (left, right)
  */
-void print_pair(Pair* p) {
-    printf("(");
+void print_pair(Pair* p, FILE* f) {
+    fprintf(f, "(");
 
-    print_type(p->left);
-    printf(", ");
-    print_type(p->right);
-    printf(")");
+    print_type(p->left, f);
+    fprintf(f, ", ");
+    print_type(p->right, f);
+    fprintf(f, ")");
 }
 
 /**

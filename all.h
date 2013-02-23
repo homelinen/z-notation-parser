@@ -44,7 +44,7 @@ struct _Set {
 void create_set(Set **set_new);
 void destroy_set(Set*); 
 void insert_el(Value key, Set **el);
-void print_set(Set*);
+void print_set(Set*, FILE*);
 void set_union(Set*, Set*);
 int set_membership(Value element, Set set);
 int set_contents_equality(Set*, Set*);
@@ -57,13 +57,13 @@ void subtraction(Set*, Set*);
 Value create_empty_value(int);
 Value* create_empty_val(int);
 void destroy_value(Value*); 
-void print_type(Value*);
+void print_type(Value*, FILE*);
 int value_equality(Value*, Value*);
 
 /*
  * Pair functions
  */
-void print_pair(Pair*);
+void print_pair(Pair*, FILE*);
 Value create_pair(Value*, Value*);
 Value* create_empty_pair(); 
 void destroy_pair(Pair*); 

@@ -44,8 +44,8 @@ void destroy_variable(Variable* var) {
  * Print the variable as:
  * {name} = {value}
  */
-void print_variable(Variable* var) {
-    printf("%s = ", var->name);
-    print_type(var->val);
-    printf(";\n");
+void print_variable(Variable* var, FILE* f) {
+    fprintf(f, "%s = ", var->name);
+    print_type(var->val, f);
+    fprintf(f, ";\n");
 }

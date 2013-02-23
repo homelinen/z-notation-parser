@@ -69,24 +69,26 @@ void insert_el(Value key, Set **el) {
  *
  * Prints the set in the form { el1, el2, ... }
  **/
-void print_set(Set *el) {
+void print_set(Set *el, FILE* f) {
     if (el != 0) {
         if (el->head) {
-            printf("{");
+            if (f) {
+                fprintf(f, "{");
+            }
         } 
 
 
         if (!el->head) {
-            print_type(&el->val);
+            print_type(&el->val, f);
 
             if (el->next != 0) {
-                printf(", ");
+                fprintf(f, ", ");
             }
         }
 
-        print_set(el->next);
+        print_set(el->next, f);
     } else {
-        printf("}");
+        fprintf(f, "}");
     }
 }
 

@@ -229,23 +229,13 @@ void parse_operator(cJSON *item) {
         item = item->next;
         i++;
     }
-
-    int j = 0;
-    for (j = 0; j < i; j++) {
-        if (vars[j]) {
-            print_variable(vars[j]);
-        } else {
-            // If the position is empty, don't bother
-            break;
-        }
-    }
 }
 
 // TODO: Move this to a shared file
-void print_answer(int num, Value* val) {
-    printf("x%d = ", num);
-    print_type(val);
-    printf(";\n");
+void print_answer(int num, Value* val, FILE* f) {
+    fprintf(f, "x%d = ", num);
+    print_type(val, f);
+    fprintf(f, ";\n");
 }
 
 int main (int argc, char** args) {
@@ -264,12 +254,12 @@ int main (int argc, char** args) {
     char line[5000];
     int i = 0;
 
+
+    /* Parse file into a line */
     while (ch != EOF) {
         
         if (ch != '\n') {
             line[i] = ch;
-        } else {
-            i = 0;
         }
 
         ch = fgetc(f);
@@ -287,11 +277,22 @@ int main (int argc, char** args) {
         vars[i] = 0;
     }
 
+    FILE* fpo = fopen("simple-output.txt", "w");
     cJSON *root = cJSON_Parse(line);
 
-    /*parse_item(root->child);*/
-    /*test_parse(root->child->child);*/
+    // Main parsing op
     parse_operator(root->child->child);
+
+    /* Print the answers */
+    int j = 0;
+    for (j = 0; j < i; j++) {
+        if (vars[j]) {
+            print_variable(vars[j], fpo);
+        } else {
+            // If the position is empty, don't bother
+            break;
+        }
+    }
 
     cJSON_Delete(root);
     fclose(f);
