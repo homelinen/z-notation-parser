@@ -20,22 +20,25 @@
  */
 void print_type(Value* val) {
     
-    switch (val->type) {
-        case INTEGER: 
-            printf("%d", val->val.i);
-            break;
-        case SET:
-            print_set(val->val.s);
-            break;
-        case PAIR:
-            print_pair(val->val.p);
-            break;
-        default:
-            printf("%p", val);
-            break;
+    if (val) {
+        switch (val->type) {
+            case INTEGER: 
+                printf("%d", val->val.i);
+                break;
+            case SET:
+                print_set(val->val.s);
+                break;
+            case PAIR:
+                print_pair(val->val.p);
+                break;
+            default:
+                printf("%p", val);
+                break;
+        }
+    } else {
+        printf("null");
     }
 }
-
 /**
  * Create a new Value of type, with nothing in it
  *
@@ -82,6 +85,9 @@ Value* create_empty_val(int type) {
         case PAIR:
             new_val->val.p = 0;
             new_val->type = PAIR;
+            break;
+        default:
+            printf("Warning: undefined!\n");
             break;
     }
 
