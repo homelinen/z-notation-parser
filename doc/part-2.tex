@@ -64,6 +64,13 @@ Returns 1 if the element is contained within the set and 0 if otherwise.  \item
 Added a Variable type for handling the variables in a reasonable manner. Store
 the name, e.g. x1 and the value that the name corresponds to.
 
+\subsection{Error Handling}
+
+There is very minimum error handling for file input and output. There is
+limited error checking for undefined variables and incorrect operator names.
+Errors only print to stderr, they do not print to the file, this was a design
+decision to reduce unnecessary passing of the output file pointer.
+
 \section{Changes}
 
 There were several changes made to the structures from Part 1. Here is a breif summary:

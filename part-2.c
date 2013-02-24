@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include "lib/cJSON.h"
 
 #include "constants.h"
@@ -39,6 +40,8 @@ Value* find_variable(char* var) {
         }
     }
 
+    fprintf(stderr, "ERROR: Undefined Variable\n");
+    exit(EXIT_FAILURE);
     return 0;
 }
 
@@ -97,11 +100,22 @@ Value* parse_base_type(cJSON* argument) {
 
                 // Equals in an equals is an equality operation
                 val_temp = parse_equality_op(argument->child->next);
+            } else {
+                fprintf(stderr, "BAD INPUT: Undefined operator.");
+                exit(EXIT_FAILURE);
             }
         }
     } else if (argument->type == cJSON_Number) {
         val_temp = create_empty_val(INTEGER);
         val_temp->val.i = argument->valueint;
+    } else {
+        fprintf(stderr, "BAD INPUT: Unexpected JSON Type.");
+        exit(EXIT_FAILURE);
+    }
+
+    if (!val_temp) {
+        fprintf(stderr, "BAD INPUT\n");
+        exit(EXIT_FAILURE);
     }
 
     return val_temp;
@@ -120,6 +134,8 @@ Value* parse_tuple_op(cJSON* arguments) {
     Value* val = create_empty_pair();
     Value* val_temp = 0;
 
+    int arg_count = 0;
+
     while (argument) {
 
         val_temp = parse_base_type(argument);
@@ -132,6 +148,7 @@ Value* parse_tuple_op(cJSON* arguments) {
             printf("Tuple can only have two values\n");
         }
 
+        arg_count++;
         argument = argument->next;
     }
 
@@ -271,8 +288,8 @@ void parse_operator(cJSON *item) {
             /* Given an allocation add the variable to the vars array */ 
             vars[i] = parse_equal_op(arguments);
         } else {
-            printf("Undefined op\n");
-            break;
+            fprintf(stderr, "ERROR: Undefined op\n");
+            exit(EXIT_FAILURE);
         }
 
         // Try the next item in the array
@@ -304,7 +321,6 @@ int main (int argc, char** args) {
     char line[5000];
     int i = 0;
 
-
     /* Parse file into a line */
     while (ch != EOF) {
         
@@ -315,9 +331,9 @@ int main (int argc, char** args) {
         ch = fgetc(f);
         i++;
         if (i > 5000) {
-            printf("Line too long\n");
+            fprintf(stderr, "Line too long\n");
             fclose(f);
-            exit(2);
+            exit(EXIT_FAILURE);
         }
     }
 
@@ -348,7 +364,7 @@ int main (int argc, char** args) {
         if (vars[j]) {
             print_variable(vars[j], fpo);
         } else {
-            // If the position is empty, don't bother
+            // If the position is empty, don't bother going further
             break;
         }
     }
@@ -358,5 +374,5 @@ int main (int argc, char** args) {
     fclose(f);
     fclose(fpo);
 
-    return 0;
+    return EXIT_SUCCESS;
 }
