@@ -31,5 +31,17 @@ value.o: value.c
 varible.o: variable.c
 	$(CC) $(CFLAGS) -c variable.c
 
+docs: part-1-doc part-2-doc
+
+part-1-doc: doc/part-1.tex
+	cd doc
+	pdflatex part-1.tex
+	cd
+
+part-2-doc: doc/part-2.tex
+	cd doc
+	pdflatex part-2.tex
+	cd
+
 clean:
 	rm -v part-1-run *.o

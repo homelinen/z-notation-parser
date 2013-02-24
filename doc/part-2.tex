@@ -1,0 +1,77 @@
+\documentclass[DIN, pagenumber=false, fontsize=11pt, parskip=half]{scrartcl}
+
+\usepackage{ngerman}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+\usepackage{xyling}
+
+\usepackage{hyperref}
+
+% for matlab code
+% bw = blackwhite - optimized for print, otherwise source is colored
+%\usepackage[framed,numbered,bw]{mcode}
+
+% for other code
+%\usepackage{listings}
+
+\setlength{\parindent}{0em}
+
+% set section in CM
+\setkomafont{section}{\normalfont\bfseries\Large}
+
+\newcommand{\mytitle}[1]{{\noindent\Large\textbf{#1}}}
+\newcommand{\mysection}[1]{\textbf{\section*{#1}}}
+\newcommand{\mysubsection}[2]{\romannumeral #1) #2}
+
+%===================================
+\begin{document}
+
+\noindent\textbf{Foundations 2} \hfill \textbf{Heriot Watt University}\\
+\hfill Calum Gilchrist\\
+
+\mytitle{Foundations 2 Assignment: Part 2 \hfill \today}
+
+
+%===================================
+
+\section{Part-2}
+
+\texttt{part-2.c} is the main file for the second part of the assignment. The
+\emph{JSON} input file was used with the
+cJSON (\hyperref[cJSON]{http://sourceforge.net/projects/cjson/}) C library.
+\emph{cJSON} was used as it uses a tree structure for the JSON making parsing
+simpler.
+The main methods of \texttt{part-2.c} are:
+
+\begin{itemize}
+    \item \texttt{parse\_operator}: This method is the outermost part of the parser. It
+    takes the root node and then loops through the array of variable objects.
+While doing this, it builds a global \emph{Variable} array.  \item
+    \texttt{parse\_equal\_op} The first equal operation is used as allocator.
+    It allocates the values in t \item \texttt{parse\_tuple\_op},
+    \texttt{parse\_set\_op} build the basic structures used, the Set and the
+Pair from the underlying JSON.  \item \texttt{parse\_equality\_op}: Compares
+    two values, sets containg the same elements are equal. Pairs are equal if
+    the elements are equal and in the same order.  \item
+    \texttt{parse\_member\_op}: Checks if a value is contained in a set.
+Returns 1 if the element is contained within the set and 0 if otherwise.  \item
+    \texttt{parse\_base\_type} Used to check the types of operators and execute
+    the method related to that type of operation, e.g. building a set for a set
+    operation.
+\end{itemize}
+
+Added a Variable type for handling the variables in a reasonable manner. Store
+the name, e.g. x1 and the value that the name corresponds to.
+
+\section{Changes}
+
+There were several changes made to the structures from Part 1. Here is a breif summary:
+
+\begin{itemize}
+    \item Changed print methods so that they can optionally be printed out to a file, rather than always standard out
+    \item Made some new create statements in Pair and Value to assist in a few pointer issues.
+    \item Fixed the Set Equality method to work with sets not in sequence.
+\end{itemize}
+
+\end{document}
