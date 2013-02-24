@@ -68,7 +68,7 @@ Value create_empty_value(int type) {
 }
 
 /*
- * Return a pointer to the value rather than an object (as above(
+ * Return a pointer to the value rather than an object (as above)
  */
 Value* create_empty_val(int type) {
     Value* new_val = (Value*) malloc ( sizeof (Value) );
@@ -94,6 +94,12 @@ Value* create_empty_val(int type) {
     return new_val;
 }
 
+/*
+ * The beginnings of a destruction function
+ *
+ * FIXME: The pointers are not unique so causes some funky things to happen
+ * NOTE: DO NOT USE, yet
+ */
 void destroy_value(Value* val) {
     if (val != 0 && val != NULL) {
         switch (val->type) {

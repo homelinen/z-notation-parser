@@ -28,6 +28,11 @@ Value create_pair(Value* left, Value* right) {
     return value_pair;
 }
 
+/*
+ * Creates an empty pair, doens't require giving the branch values on init
+ *
+ * Returns a pointer to the new pair
+ */
 Value* create_empty_pair() {
     Value* value_pair = create_empty_val(PAIR);
     Pair* p = (Pair*) malloc( sizeof( Pair ) );
@@ -38,13 +43,15 @@ Value* create_empty_pair() {
     return value_pair;
 }
 
+/*
+ * The beginnings of a destroy function
+ */
 void destroy_pair(Pair* p) {
     // Ensure p points to something
     if (p != 0) {
         destroy_value(p->left);
         destroy_value(p->right);
         free(p);
-
     }
 }
 

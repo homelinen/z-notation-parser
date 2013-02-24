@@ -7,7 +7,12 @@
 #include "all.h"
 #include "variable.h"
 
-
+/*
+ * Overloaded method to create a variable without giving 
+ * the name and value
+ *
+ * Returns a pointer to the new Variable
+ */
 Variable* create_empty_variable() {
     return create_variable(0, 0);
 }
