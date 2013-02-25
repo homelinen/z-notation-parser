@@ -26,24 +26,39 @@ Value* parse_equality_op(cJSON*);
 Variable* parse_equal_op(cJSON*);
 Value* parse_member_op(cJSON*);
 Value* parse_tuple_op(cJSON*);
-Value* find_variable(char*);
+Variable* find_variable(char*);
+Value* find_var_val(char*);
+
+/**
+ * Helper method to get the value of a variable
+ *
+ * Returns the value of the variable, or a 0 pointer if no such variable exists
+ */
+Value* find_var_val(char* var) {
+
+    Variable* t_var = 0;
+    t_var = find_variable(var);
+
+    if (t_var) {
+        return(t_var->val);
+    } else {
+        return(0); 
+    }
+}
 
 /*
  * Loop through the global variables array searching for the given variable
  *
- * TODO: Update variables if they exist
- *
  * Returns a zero pointer if the variable doesn't exist
  */
-Value* find_variable(char* var) {
+Variable* find_variable(char* var) {
     int i;
     for (i = 0; i < 100; i++) {
         if (vars[i] && strncmp(vars[i]->name, var, 30) == 0) {
-            return vars[i]->val;
+            return vars[i];
         }
     }
 
-    fprintf(stderr, "ERROR: Undefined Variable\n");
     return 0;
 }
 
@@ -87,7 +102,11 @@ Value* parse_base_type(cJSON* argument) {
              * Given a variable, find it in the vars array 
              * FIXME: If the variable is undefined, handle it 
              */
-            val_temp = find_variable(argument->child->valuestring);
+            val_temp = find_var_val(argument->child->valuestring);
+            if (!val_temp) {
+                val_temp = create_empty_val(INTEGER);
+                val_temp->val.i = -15;
+            }
         } else if (strncmp(argument->child->string, "operator", 30) == 0) {
             if (strncmp(argument->child->valuestring, "set", 30) == 0) {
 
@@ -118,7 +137,8 @@ Value* parse_base_type(cJSON* argument) {
     }
 
     if (!val_temp) {
-        fprintf(stderr, "BAD INPUT\n");
+        fprintf(stderr, "BAD INPUT: Value null\n");
+        fprintf(output_file, "BAD INPUT\n");
         exit(EXIT_FAILURE);
     }
 
@@ -242,8 +262,15 @@ Variable* parse_equal_op(cJSON* arguments) {
             if (strncmp(argument->child->string, "variable", 30) == 0) {
 
                 if (!var->name) {
-                    /* Set Variable name */
-                    var->name = argument->child->valuestring;
+                    if (!find_var_val(argument->child->valuestring)) {
+
+                        /* Set Variable name */
+                        var->name = argument->child->valuestring;
+                    } else {
+                        //Variable has already been set
+                        // FIXME: Store this somewhere, to reduce O(n) lookups
+                        var = find_variable(argument->child->valuestring);
+                    }
                 } else {
                     *var->val = *parse_base_type(argument);
                 }
