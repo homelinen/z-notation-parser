@@ -18,11 +18,12 @@
 
 // Global array of variables (Messy)
 Variable* vars[25];
+FILE* output_file;
 
 /* Signitures */
 Value* parse_base_type(cJSON*);
 Value* parse_equality_op(cJSON*);
-Variable* parse_equal_op(cJSON*, FILE*);
+Variable* parse_equal_op(cJSON*);
 Value* parse_member_op(cJSON*);
 Value* parse_tuple_op(cJSON*);
 Value* find_variable(char*);
@@ -104,6 +105,7 @@ Value* parse_base_type(cJSON* argument) {
                 val_temp = parse_equality_op(argument->child->next);
             } else {
                 fprintf(stderr, "BAD INPUT: Undefined operator.");
+                fprintf(output_file, "BAD INPUT\n");
                 exit(EXIT_FAILURE);
             }
         }
@@ -112,6 +114,7 @@ Value* parse_base_type(cJSON* argument) {
         val_temp->val.i = argument->valueint;
     } else {
         fprintf(stderr, "BAD INPUT: Unexpected JSON Type.");
+        fprintf(output_file, "BAD INPUT\n");
         exit(EXIT_FAILURE);
     }
 
@@ -230,7 +233,7 @@ Value* parse_equality_op(cJSON* arguments) {
  *
  * Returns a variable with the name of the allocated variable and the type in reference.
  */
-Variable* parse_equal_op(cJSON* arguments, FILE* f) {
+Variable* parse_equal_op(cJSON* arguments) {
     cJSON* argument = arguments->child;
 
     Variable* var = create_empty_variable();
@@ -255,7 +258,7 @@ Variable* parse_equal_op(cJSON* arguments, FILE* f) {
         
         argument = argument->next;
     }
-    print_variable(var, f);
+    print_variable(var, output_file);
 
     return var;
 }
@@ -263,7 +266,7 @@ Variable* parse_equal_op(cJSON* arguments, FILE* f) {
 /*
  * Iterates through the JSON Tree and builds the variable array
  */
-void parse_operator(cJSON *item, FILE* f) {
+void parse_operator(cJSON *item) {
 
     int i = 0;
     while(item) {
@@ -276,9 +279,10 @@ void parse_operator(cJSON *item, FILE* f) {
         if (strncmp(operator->valuestring, "equal", 30) == 0) {
             /* Given an allocation add the variable to the vars array */ 
             // FIXME: Deal with duplicate variable names
-            vars[i] = parse_equal_op(arguments, f);
+            vars[i] = parse_equal_op(arguments);
         } else {
             fprintf(stderr, "ERROR: Undefined op\n");
+            fprintf(output_file, "BAD INPUT\n");
             exit(EXIT_FAILURE);
         }
 
@@ -337,7 +341,7 @@ int main (int argc, char** args) {
     /* The output file
      * TODO: Make a command line arg
      */
-    FILE* fpo = fopen("output.txt", "w");
+    output_file = fopen("output.txt", "w");
 
     /* Use if want to print to stdout */
     /*FILE* fpo = stdout;*/
@@ -346,12 +350,12 @@ int main (int argc, char** args) {
     cJSON *root = cJSON_Parse(line);
 
     // Main parsing op
-    parse_operator(root->child->child, fpo);
+    parse_operator(root->child->child);
 
     /* Clean up */
     cJSON_Delete(root);
     fclose(f);
-    fclose(fpo);
+    fclose(output_file);
 
     return EXIT_SUCCESS;
 }
