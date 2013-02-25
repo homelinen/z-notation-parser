@@ -17,7 +17,7 @@
  */
 
 // Global array of variables (Messy)
-Variable* vars[25];
+Variable* vars[100];
 FILE* output_file;
 
 /* Signitures */
@@ -37,14 +37,13 @@ Value* find_variable(char*);
  */
 Value* find_variable(char* var) {
     int i;
-    for (i = 0; i < 25; i++) {
+    for (i = 0; i < 100; i++) {
         if (vars[i] && strncmp(vars[i]->name, var, 30) == 0) {
             return vars[i]->val;
         }
     }
 
     fprintf(stderr, "ERROR: Undefined Variable\n");
-    exit(EXIT_FAILURE);
     return 0;
 }
 
@@ -242,8 +241,12 @@ Variable* parse_equal_op(cJSON* arguments) {
         if (argument->type == cJSON_Object) {
             if (strncmp(argument->child->string, "variable", 30) == 0) {
 
-                /* Set Variable name */
-                var->name = argument->child->valuestring;
+                if (!var->name) {
+                    /* Set Variable name */
+                    var->name = argument->child->valuestring;
+                } else {
+                    *var->val = *parse_base_type(argument);
+                }
             } else if (strncmp(argument->child->string, "operator", 30) == 0) {
 
                 *var->val = *parse_base_type(argument);
@@ -333,7 +336,7 @@ int main (int argc, char** args) {
 
     // Initialise Global Vars;
     i = 0;
-    for (i = 0; i < 25; i++) {
+    for (i = 0; i < 100; i++) {
         vars[i] = 0;
     }
 
