@@ -42,6 +42,10 @@
 cJSON (\hyperref[cJSON]{http://sourceforge.net/projects/cjson/}) C library.
 \emph{cJSON} was used as it uses a tree structure for the JSON making parsing
 simpler.
+
+part-2.c expects there to be a file called input.json to run, prints an appropriate error if this is not the case, however.
+Output is printed to the file \textbf{output.txt}.
+
 The main methods of \texttt{part-2.c} are:
 
 \begin{itemize}
@@ -62,14 +66,18 @@ Returns 1 if the element is contained within the set and 0 if otherwise.  \item
 \end{itemize}
 
 Added a Variable type for handling the variables in a reasonable manner. Store
-the name, e.g. x1 and the value that the name corresponds to.
+the name, e.g. \(x1\) and the value that the name corresponds to.
+
+One flaw in the program is that it does not handle undefined variables in
+operators. So a set of \(\{x100\}\) will print as \(\{undefined!\}\),
+where \(x100\) has not been defined.
 
 \subsection{Error Handling}
 
 There is very minimum error handling for file input and output. There is
 limited error checking for undefined variables and incorrect operator names.
-Errors only print to stderr, they do not print to the file, this was a design
-decision to reduce unnecessary passing of the output file pointer.
+Slightly more detailed erros are printed to stderr, and also the phrase: "BAD
+INPUT" is printed to the end of the output file.
 
 \section{Changes}
 
