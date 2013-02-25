@@ -10,6 +10,11 @@
 * Modify int head parameters to use the internal flag of Sets
 * Does not deal with duplicates
 
+### Error Handling ###
+
+* If something is undefined, but then later defined, will that work?
+* Two undefined methods are equal?
+
 ### Joe's Notes/Suggestions ###
 
 * Reference counting

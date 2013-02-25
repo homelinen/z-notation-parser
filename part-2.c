@@ -104,8 +104,7 @@ Value* parse_base_type(cJSON* argument) {
              */
             val_temp = find_var_val(argument->child->valuestring);
             if (!val_temp) {
-                val_temp = create_empty_val(INTEGER);
-                val_temp->val.i = -15;
+                val_temp = create_empty_val(UNDEFINED);
             }
         } else if (strncmp(argument->child->string, "operator", 30) == 0) {
             if (strncmp(argument->child->valuestring, "set", 30) == 0) {

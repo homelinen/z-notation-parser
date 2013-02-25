@@ -31,6 +31,9 @@ void print_type(Value* val, FILE* f) {
             case PAIR:
                 print_pair(val->val.p, f);
                 break;
+            case UNDEFINED:
+                fprintf(f, "undefined!");
+                break;
             default:
                 fprintf(f, "%p", val);
                 break;
@@ -62,6 +65,10 @@ Value create_empty_value(int type) {
             new_val->val.p = 0;
             new_val->type = PAIR;
             break;
+        case UNDEFINED:
+            new_val->val.i = 0;
+            new_val->type = UNDEFINED;
+            break;
     }
 
     return *new_val;
@@ -85,6 +92,10 @@ Value* create_empty_val(int type) {
         case PAIR:
             new_val->val.p = 0;
             new_val->type = PAIR;
+            break;
+        case UNDEFINED:
+            new_val->val.i = 0;
+            new_val->type = UNDEFINED;
             break;
         default:
             printf("Warning: undefined!\n");
