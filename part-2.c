@@ -22,13 +22,15 @@ Variable* vars[25];
 /* Signitures */
 Value* parse_base_type(cJSON*);
 Value* parse_equality_op(cJSON*);
-Variable* parse_equal_op(cJSON*);
+Variable* parse_equal_op(cJSON*, FILE*);
 Value* parse_member_op(cJSON*);
 Value* parse_tuple_op(cJSON*);
 Value* find_variable(char*);
 
 /*
  * Loop through the global variables array searching for the given variable
+ *
+ * TODO: Update variables if they exist
  *
  * Returns a zero pointer if the variable doesn't exist
  */
@@ -228,7 +230,7 @@ Value* parse_equality_op(cJSON* arguments) {
  *
  * Returns a variable with the name of the allocated variable and the type in reference.
  */
-Variable* parse_equal_op(cJSON* arguments) {
+Variable* parse_equal_op(cJSON* arguments, FILE* f) {
     cJSON* argument = arguments->child;
 
     Variable* var = create_empty_variable();
@@ -239,23 +241,9 @@ Variable* parse_equal_op(cJSON* arguments) {
 
                 /* Set Variable name */
                 var->name = argument->child->valuestring;
-
             } else if (strncmp(argument->child->string, "operator", 30) == 0) {
 
-                if (strncmp(argument->child->valuestring, "set", 30) == 0) {
-
-                    *var->val = *parse_set_op(argument->child->next);
-                } else if (strncmp(argument->child->valuestring, "tuple", 30) == 0) {
-
-                    *var->val = *parse_tuple_op(argument->child->next);
-                } else if (strncmp(argument->child->valuestring, "member", 30) == 0) {
-
-                    *var->val = *parse_member_op(argument->child->next);
-                } else if (strncmp(argument->child->valuestring, "equal", 30) == 0) {
-
-                    // Equals in an equals is an equality operation
-                    *var->val = *parse_equality_op(argument->child->next);
-                }
+                *var->val = *parse_base_type(argument);
             }
         } else if (argument->type == cJSON_Number) {
 
@@ -267,6 +255,7 @@ Variable* parse_equal_op(cJSON* arguments) {
         
         argument = argument->next;
     }
+    print_variable(var, f);
 
     return var;
 }
@@ -274,7 +263,7 @@ Variable* parse_equal_op(cJSON* arguments) {
 /*
  * Iterates through the JSON Tree and builds the variable array
  */
-void parse_operator(cJSON *item) {
+void parse_operator(cJSON *item, FILE* f) {
 
     int i = 0;
     while(item) {
@@ -286,7 +275,8 @@ void parse_operator(cJSON *item) {
 
         if (strncmp(operator->valuestring, "equal", 30) == 0) {
             /* Given an allocation add the variable to the vars array */ 
-            vars[i] = parse_equal_op(arguments);
+            // FIXME: Deal with duplicate variable names
+            vars[i] = parse_equal_op(arguments, f);
         } else {
             fprintf(stderr, "ERROR: Undefined op\n");
             exit(EXIT_FAILURE);
@@ -356,18 +346,7 @@ int main (int argc, char** args) {
     cJSON *root = cJSON_Parse(line);
 
     // Main parsing op
-    parse_operator(root->child->child);
-
-    /* Print the answers */
-    int j = 0;
-    for (j = 0; j < i; j++) {
-        if (vars[j]) {
-            print_variable(vars[j], fpo);
-        } else {
-            // If the position is empty, don't bother going further
-            break;
-        }
-    }
+    parse_operator(root->child->child, fpo);
 
     /* Clean up */
     cJSON_Delete(root);
