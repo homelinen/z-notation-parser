@@ -9,6 +9,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+//Required for memcpy
+#include <string.h>
+
 #include "constants.h"
 #include "all.h"
 
@@ -18,17 +21,19 @@
  *
  * TODO: Make this not segfault
  **/
-void destroy_set(Set *el) {
+void destroy_set(Set **el) {
+
     // Check the set points somewhere
     if (el != 0 && el != NULL) {
-        if (el->next != 0) {
-            destroy_set(el->next);
+        if ((*el)->next != 0) {
+            destroy_set(&(*el)->next);
         } 
 
-        if (!el->head) {
-            destroy_value(&el->val);
+        if (!((*el)->head)) {
+            printf("\n SAVE ME JEEBUS\n");
+            printf("%p\n", *el);
+            destroy_value(&((*el)->val));
         }
-        /*free(el);*/
     }
 }
 
@@ -52,8 +57,13 @@ void insert_el(Value key, Set **el) {
 
     if (*el == 0) {
         //If empty, at end of tree so create new element
+        
+        // Make a copy of the value to reduce complications in destroy
+        Value* key_copy = create_empty_val(UNDEFINED);
+        memcpy(key_copy, &key, sizeof(key));
+
         create_set (el);
-        (*el)->val = key;
+        (*el)->val = *key_copy;
         (*el)->head = 0;
     } else if (*el != 0) {
         // If not at the end, add one to the length and go to next
@@ -92,6 +102,29 @@ void print_set(Set *el, FILE* f) {
     }
 }
 
+void print_set_address(Set *el, FILE* f) {
+    if (el != 0) {
+        if (el->head) {
+            if (f) {
+                fprintf(f, "{");
+            }
+        } 
+
+
+        if (!el->head) {
+            print_type_address(&el->val, f);
+
+            if (el->next != 0) {
+                fprintf(f, ", ");
+            }
+        }
+
+        print_set_address(el->next, f);
+    } else {
+        fprintf(f, "}");
+    }
+}
+
 /**
  * Create the union between the second set and first set
  *
@@ -101,9 +134,10 @@ void print_set(Set *el, FILE* f) {
  *
  * Returns the union in first, through pointers
  **/
-void set_union(Set* first, Set* second) {
+void set_union(Set* first_orig, Set* second) {
 
-    //Assuming the head of the set is always non-zero
+    Set* first = (Set*) malloc(sizeof (Set));
+    memcpy(first, first_orig, sizeof(Set));
 
     if (second->next != 0) {
         //Recursively add the next val of second to first
@@ -121,7 +155,10 @@ void set_union(Set* first, Set* second) {
  * first - The initial set and modified set, as first is modified in place
  * second - The set to compare against
  */
-void subtraction(Set* first, Set* second) {
+void subtraction(Set* first_orig, Set* second) {
+
+    Set* first = (Set*) malloc(sizeof (Set));
+    memcpy(first, first_orig, sizeof(Set));
 
     if (first != 0 && second != 0) {
 

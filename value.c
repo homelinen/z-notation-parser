@@ -42,6 +42,32 @@ void print_type(Value* val, FILE* f) {
         printf("null");
     }
 }
+
+void print_type_address(Value* val, FILE* f) {
+    
+    if (val) {
+        fprintf(f, "%p: ", val);
+        switch (val->type) {
+            case INTEGER: 
+                fprintf(f, "%d", val->val.i);
+                break;
+            case SET:
+                print_set_address(val->val.s, f);
+                break;
+            case PAIR:
+                print_pair_address(val->val.p, f);
+                break;
+            case UNDEFINED:
+                fprintf(f, "undefined!");
+                break;
+            default:
+                fprintf(f, "%p", val);
+                break;
+        }
+    } else {
+        printf("null");
+    }
+}
 /**
  * Create a new Value of type, with nothing in it
  *
@@ -114,9 +140,9 @@ Value* create_empty_val(int type) {
 void destroy_value(Value* val) {
     if (val != 0 && val != NULL) {
         switch (val->type) {
-
+            printf("Destroy!\n");
             case SET:
-                destroy_set(val->val.s);
+                destroy_set(&val->val.s);
                 break;
             case PAIR:
                 destroy_pair(val->val.p);

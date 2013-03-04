@@ -133,7 +133,14 @@ int main(int argc, char** argv) {
     print_set(intersected, fpo);
     fprintf(fpo, ";\n");
 
+    fprintf(fpo, "x4_address = ");
+    print_type_address(&x4, stdout);
+    printf("\n");
+
     // free things
+    destroy_value(&x4);
+    printf("FREE\n");
+//    destroy_value(&x1);
 
     return 0;
 }

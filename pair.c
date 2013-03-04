@@ -7,6 +7,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// For memcpy
+#include <string.h>
+
 #include "constants.h"
 #include "all.h"
 
@@ -21,8 +24,15 @@
 Value create_pair(Value* left, Value* right) {
     Value value_pair = create_empty_value(PAIR);
     Pair* p = (Pair*) malloc( sizeof( Pair ) );
-    p->left = left;
-    p->right = right;
+
+    // Copy values
+    Value* left_copy = create_empty_val(UNDEFINED);
+    memcpy(left_copy, left, sizeof(Value));
+    Value* right_copy = create_empty_val(UNDEFINED);
+    memcpy(right_copy, right, sizeof(Value));
+
+    p->left = left_copy;
+    p->right = right_copy;
     value_pair.val.p = p;
 
     return value_pair;
@@ -51,7 +61,6 @@ void destroy_pair(Pair* p) {
     if (p != 0) {
         destroy_value(p->left);
         destroy_value(p->right);
-        free(p);
     }
 }
 
@@ -67,6 +76,15 @@ void print_pair(Pair* p, FILE* f) {
     print_type(p->left, f);
     fprintf(f, ", ");
     print_type(p->right, f);
+    fprintf(f, ")");
+}
+
+void print_pair_address(Pair* p, FILE* f) {
+    fprintf(f, "(");
+
+    printf("%p", p->left);
+    fprintf(f, ", ");
+    printf("%p", p->right);
     fprintf(f, ")");
 }
 
