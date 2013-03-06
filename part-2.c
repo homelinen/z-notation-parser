@@ -330,38 +330,29 @@ void print_answer(int num, Value* val, FILE* f) {
 
 int main (int argc, char** args) {
 
-    FILE* f = fopen("input.json", "r");
+    FILE* pFile = fopen("input.json", "r");
 
     // Check file
-    if (f == 0) {
+    if (pFile == 0) {
         printf("File does not exist\n");
         exit(1);
     }
 
-    char ch;
+    int fileSize = 0;
 
-    ch = fgetc(f);
-    char line[5000];
-    int i = 0;
+    fseek(pFile, 0, SEEK_END);
+    fileSize = ftell(pFile);
+    rewind(pFile);
+    char *data = (char*) calloc(sizeof(char), fileSize + 20);
+    fread(data, 1, fileSize, pFile);
 
-    /* Parse file into a line */
-    while (ch != EOF) {
-        
-        if (ch != '\n') {
-            line[i] = ch;
-        }
-
-        ch = fgetc(f);
-        i++;
-        if (i > 5000) {
-            fprintf(stderr, "Line too long\n");
-            fclose(f);
-            exit(EXIT_FAILURE);
-        }
+    if(ferror(pFile)){
+        printf("fread issue\n");
+        exit(1);
     }
 
     // Initialise Global Vars;
-    i = 0;
+    int i = 0;
     for (i = 0; i < 100; i++) {
         vars[i] = 0;
     }
@@ -376,14 +367,14 @@ int main (int argc, char** args) {
     /*FILE* fpo = stdout;*/
 
     /* Get the JSON Tree */
-    cJSON *root = cJSON_Parse(line);
+    cJSON *root = cJSON_Parse(data);
 
     // Main parsing op
     parse_operator(root->child->child);
 
     /* Clean up */
     cJSON_Delete(root);
-    fclose(f);
+    fclose(pFile);
     fclose(output_file);
 
     return EXIT_SUCCESS;
