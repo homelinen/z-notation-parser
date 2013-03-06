@@ -24,6 +24,12 @@ FILE* output_file;
 Value* parse_base_type(cJSON*);
 Value* parse_equality_op(cJSON*);
 Variable* parse_equal_op(cJSON*);
+Value* parse_is_func_op(cJSON*);
+Value* parse_dom_op(cJSON*);
+Value* parse_ran_op(cJSON*);
+Value* parse_union_op(cJSON*);
+Value* parse_subtraction_op(cJSON*);
+Value* parse_intersect_op(cJSON*);
 Value* parse_member_op(cJSON*);
 Value* parse_tuple_op(cJSON*);
 Variable* find_variable(char*);
@@ -90,6 +96,67 @@ Value* parse_set_op(cJSON* arguments) {
     return val;
 }
 
+Value* parse_is_func_op(cJSON* arguments) {
+    
+    /* Traverse into the first child of the array */
+    cJSON* argument = arguments->child;
+
+    Value* val = create_empty_val(INTEGER);
+    Value* val_temp = 0;
+
+    if (argument) {
+
+        // Get the base type of the argument
+        val_temp = parse_base_type(argument);
+
+        val->val.i = isFunction(val_temp);
+    }
+
+    return val;
+}
+
+Value* parse_dom_op(cJSON* arguments) {
+    
+    /* Traverse into the first child of the array */
+    cJSON* argument = arguments->child;
+
+    Value* val = create_empty_val(SET);
+    create_set(&val->val.s);
+
+    Value* val_temp = 0;
+
+    if (argument) {
+
+        // Get the base type of the argument
+        val_temp = parse_base_type(argument);
+
+        val->val.s = func_dom(val_temp);
+    }
+
+    return val;
+}
+
+Value* parse_ran_op(cJSON* arguments) {
+    
+    /* Traverse into the first child of the array */
+    cJSON* argument = arguments->child;
+
+    Value* val = create_empty_val(SET);
+    create_set(&val->val.s);
+
+    Value* val_temp = 0;
+
+    if (argument) {
+
+        // Get the base type of the argument
+        val_temp = parse_base_type(argument);
+
+        val->val.s = func_ran(val_temp);
+    }
+
+    return val;
+}
+
 /**
  * Look through the different types in an abstracted recursive way
  */
@@ -120,10 +187,23 @@ Value* parse_base_type(cJSON* argument) {
 
                 // Equals in an equals is an equality operation
                 val_temp = parse_equality_op(argument->child->next);
+
+            } else if (strncmp(argument->child->valuestring, "subtraction", 30) == 0) {
+                val_temp = parse_subtraction_op(argument->child->next);
+            } else if (strncmp(argument->child->valuestring, "union", 30) == 0) {
+                val_temp = parse_union_op(argument->child->next);
+            } else if (strncmp(argument->child->valuestring, "intersection", 30) == 0) {
+                val_temp = parse_intersect_op(argument->child->next);
+            } else if (strncmp(argument->child->valuestring, "is-function", 30) == 0) {
+                val_temp = parse_is_func_op(argument->child->next);
+            } else if (strncmp(argument->child->valuestring, "domain", 30) == 0) {
+                val_temp = parse_dom_op(argument->child->next);
+            } else if (strncmp(argument->child->valuestring, "range", 30) == 0) {
+                val_temp = parse_ran_op(argument->child->next);
             } else {
-                fprintf(stderr, "BAD INPUT: Undefined operator.");
+                fprintf(stderr, "BAD INPUT: Undefined operator: %s\n", argument->child->valuestring);
                 fprintf(output_file, "BAD INPUT\n");
-                exit(EXIT_FAILURE);
+              //  exit(EXIT_FAILURE);
             }
         }
     } else if (argument->type == cJSON_Number) {
@@ -205,6 +285,97 @@ Value* parse_member_op(cJSON* args) {
         set_temp = parse_base_type(argument);
 
         value->val.i = set_membership(*val_temp, *set_temp->val.s);
+    } else {
+        /* If there aren't enough argument, set value to false */
+        value->val.i = 0;
+    }
+    
+    return value;
+}
+
+Value* parse_union_op(cJSON* args) {
+
+    /* Traverse into the first child of the array */
+    cJSON* argument = args->child;
+
+    Value* set_temp = 0;
+    Value* value = create_empty_val(SET);
+
+    Value* val_temp = 0;
+
+    if (argument && argument->next) {
+
+        /* Get the first element to compare */
+        val_temp = parse_base_type(argument);
+        argument = argument->next;
+
+        /* Get the set to check if val_temp is contained with */
+        set_temp = parse_base_type(argument);
+
+        /* FIXME: Check argument is a set */
+
+        set_union(val_temp->val.s, set_temp->val.s, value->val.s);
+    } else {
+        /* If there aren't enough argument, set value to false */
+        value->val.i = 0;
+    }
+    
+    return value;
+}
+
+Value* parse_intersect_op(cJSON* args) {
+
+    /* Traverse into the first child of the array */
+    cJSON* argument = args->child;
+
+    Value* set_temp = 0;
+    Value* value = create_empty_val(SET);
+    create_set(&value->val.s);
+
+    Value* val_temp = 0;
+
+    if (argument && argument->next) {
+
+        /* Get the first element to compare */
+        val_temp = parse_base_type(argument);
+
+        /* Get second element */
+        argument = argument->next;
+        set_temp = parse_base_type(argument);
+
+        /* FIXME: Check argument is a set */
+
+        intersection(val_temp->val.s, set_temp->val.s, value->val.s);
+        printf("Intersection: "); print_type(val_temp, stdout); printf("\n");
+    } else {
+        /* If there aren't enough argument, set value to false */
+        value->val.i = 0;
+    }
+    
+    return value;
+}
+
+Value* parse_subtraction_op(cJSON* args) {
+
+    /* Traverse into the first child of the array */
+    cJSON* argument = args->child;
+
+    Value* set_temp = 0;
+    Value* value = create_empty_val(SET);
+    create_set(&value->val.s);
+
+    Value* val_temp = 0;
+
+    if (argument && argument->next) {
+
+        /* Get the first element to compare */
+        val_temp = parse_base_type(argument);
+
+        /* Get second element */
+        argument = argument->next;
+        set_temp = parse_base_type(argument);
+
+        subtraction(val_temp->val.s, set_temp->val.s, value->val.s);
     } else {
         /* If there aren't enough argument, set value to false */
         value->val.i = 0;

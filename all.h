@@ -45,11 +45,15 @@ void create_set(Set **set_new);
 void destroy_set(Set*); 
 void insert_el(Value key, Set **el);
 void print_set(Set*, FILE*);
-void set_union(Set*, Set*);
+void set_union(Set*, Set*, Set*);
 int set_membership(Value element, Set set);
+int isFunction(Value*);
+Set* func_dom(Value*);
+Set* func_ran(x2);
+Value func_application(Set*);
 int set_contents_equality(Set*, Set*);
 void intersection(Set*, Set*, Set*);
-void subtraction(Set*, Set*);
+void subtraction(Set*, Set*, Set*);
 
 /*
  * Value functions

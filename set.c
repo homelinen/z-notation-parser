@@ -8,6 +8,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "constants.h"
 #include "all.h"
@@ -101,15 +102,19 @@ void print_set(Set *el, FILE* f) {
  *
  * Returns the union in first, through pointers
  **/
-void set_union(Set* first, Set* second) {
+void set_union(Set* first, Set* second, Set* result) {
+
+    if (!result) {
+        memcpy(result, first, sizeof(Set));
+    }
 
     //Assuming the head of the set is always non-zero
 
     if (second->next != 0) {
         //Recursively add the next val of second to first
-        insert_el(second->next->val, &first);
+        insert_el(second->next->val, &result);
 
-        set_union(first, second->next);
+        set_union(first, second->next, result);
     }
 }
 
@@ -118,10 +123,15 @@ void set_union(Set* first, Set* second) {
  *
  * Find the elements in second that are equal to those in first and remove them from first.
  *
- * first - The initial set and modified set, as first is modified in place
+ * first - First set
  * second - The set to compare against
+ * result - Where the result is placed
  */
-void subtraction(Set* first, Set* second) {
+void subtraction(Set* first, Set* second, Set* result) {
+
+    if (!result) {
+        create_set(&result);
+    }
 
     if (first != 0 && second != 0) {
 
@@ -154,7 +164,7 @@ void subtraction(Set* first, Set* second) {
                 }
             } while (sec_temp != 0);
             // Subtract all of the second elements from the next element
-            subtraction(first->next, second);
+            subtraction(first->next, second, result);
         }
     }
 }
@@ -170,7 +180,11 @@ void subtraction(Set* first, Set* second) {
  *
  * Returns all the elements in first that are the same as those in second. These matching elements are placed in intersected.
  */
-void intersection(Set* first, Set* second, Set* intersected) {
+void intersection(Set* first, Set* second, Set* result) {
+
+    if (!result) {
+        create_set(&result);
+    }
 
     if (first != 0 && second != 0) {
 
@@ -184,8 +198,8 @@ void intersection(Set* first, Set* second, Set* intersected) {
             do {
                 // Check if the children are equal
                 if (value_equality(&(first->next->val), &(sec_temp->val))) {
-                    // Insert the intersected value
-                    insert_el(first->next->val, &intersected);
+                    // Insert the result value
+                    insert_el(first->next->val, &result);
                 }
 
                 if (sec_temp->next != 0) {
@@ -196,9 +210,85 @@ void intersection(Set* first, Set* second, Set* intersected) {
             } while (sec_temp != 0);
 
             // Find intersection for next
-            intersection(first->next, second, intersected);
+            intersection(first->next, second, result);
         }
     }
+}
+
+/*
+ * Check if a set is function or not
+ *
+ * A function is a set of pairs
+ *
+ * Returns true if the set is a function, false otherwise
+ */
+int isFunction(Value* func){
+
+    if (func->type != SET) {
+        return 0;
+    }
+
+    Set* temp_func = func->val.s;
+
+    // Check all the elements of the set
+    while(temp_func->next) {
+        // Check that the element is a pair
+        if (temp_func->next->val.type != PAIR) {
+            return 0;
+        }
+        temp_func = temp_func->next;
+    }
+
+    // If nothing strange was found, must be true
+    return 1;
+}
+
+/*
+ * Return the domain of a function
+ */
+Set* func_dom(Value* func) {
+
+    Set* temp_set = 0;
+
+    // First check it's a function
+    if (isFunction(func)) {
+        Set* temp_func = func->val.s;
+        temp_set = 0;
+        create_set(&temp_set);
+        
+        while (temp_func->next) {
+            
+            // Add the left element of the pair to the temp set
+            insert_el(*temp_func->next->val.val.p->left, &temp_set);
+            temp_func = temp_func->next;
+        }
+    }
+
+    return temp_set;
+}
+
+/*
+ * Return the range of a function
+ */
+Set* func_ran(Value* func) {
+
+    Set* temp_set = 0;
+
+    // First check it's a function
+    if (isFunction(func)) {
+        Set* temp_func = func->val.s;
+        temp_set = 0;
+        create_set(&temp_set);
+        
+        while (temp_func->next) {
+            
+            // Add the left element of the pair to the temp set
+            insert_el(*temp_func->next->val.val.p->right, &temp_set);
+            temp_func = temp_func->next;
+        }
+    }
+
+    return temp_set;
 }
 
 /**
