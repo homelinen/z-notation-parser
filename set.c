@@ -93,6 +93,26 @@ void print_set(Set *el, FILE* f) {
     }
 }
 
+/*
+ * Apply an argument to a function
+ */
+Value* apply_func(Value* func, Value* arg) {
+
+    if (isFunction(func)) {
+        Set* set_walk = func->val.s;
+
+        while (set_walk->next) {
+
+            if (set_walk->next->val.val.p->left->val.i == arg->val.i) {
+                return set_walk->next->val.val.p->right;
+            }
+            set_walk = set_walk->next;
+        }
+    }
+
+    return 0;
+}
+
 /**
  * Create the union between the second set and first set
  *
@@ -104,7 +124,7 @@ void print_set(Set *el, FILE* f) {
  **/
 void set_union(Set* first, Set* second, Set* result) {
 
-    if (!result) {
+    if (result->head) {
         memcpy(result, first, sizeof(Set));
     }
 
@@ -129,13 +149,13 @@ void set_union(Set* first, Set* second, Set* result) {
  */
 void subtraction(Set* first, Set* second, Set* result) {
 
-    if (!result) {
-        create_set(&result);
+    if (result->head) {
+        memcpy(result, first, sizeof(Set));
     }
 
-    if (first != 0 && second != 0) {
+    if (result != 0 && second != 0) {
 
-        if (first->next != 0) {
+        if (result->next != 0) {
 
             // Copy the second set
             Set* sec_temp = (Set*) (malloc ( sizeof (Set) ));
@@ -145,11 +165,11 @@ void subtraction(Set* first, Set* second, Set* result) {
             do {
 
                 // Check if the children are equal
-                if (value_equality(&(first->next->val), &(sec_temp->val))) {
-                    //Set* next = first->next;
+                if (value_equality(&(result->next->val), &(sec_temp->val))) {
+                    //Set* next = result->next;
                     // Change the current next pointer to the child's child
                     // Remove the child node from the list
-                    first->next = first->next->next;
+                    result->next = result->next->next;
 
                     // Remove next from memory
                     //
@@ -164,7 +184,7 @@ void subtraction(Set* first, Set* second, Set* result) {
                 }
             } while (sec_temp != 0);
             // Subtract all of the second elements from the next element
-            subtraction(first->next, second, result);
+            subtraction(first, second, result->next);
         }
     }
 }

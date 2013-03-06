@@ -115,6 +115,32 @@ Value* parse_is_func_op(cJSON* arguments) {
     return val;
 }
 
+Value* parse_apply_func_op(cJSON* arguments) {
+    
+    /* Traverse into the first child of the array */
+    cJSON* argument = arguments->child;
+
+    Value* val = create_empty_val(INTEGER);
+    Value* val_temp = 0;
+    Value* set_temp = 0;
+
+    if (argument) {
+
+        /* Get the first element to compare */
+        val_temp = parse_base_type(argument);
+        argument = argument->next;
+
+        /* Get the set to check if val_temp is contained with */
+        set_temp = parse_base_type(argument);
+
+        /* FIXME: Check argument is a set */
+
+        val = apply_func(val_temp, set_temp);
+    }
+
+    return val;
+}
+
 Value* parse_dom_op(cJSON* arguments) {
     
     /* Traverse into the first child of the array */
@@ -188,7 +214,7 @@ Value* parse_base_type(cJSON* argument) {
                 // Equals in an equals is an equality operation
                 val_temp = parse_equality_op(argument->child->next);
 
-            } else if (strncmp(argument->child->valuestring, "subtraction", 30) == 0) {
+            } else if (strncmp(argument->child->valuestring, "set-difference", 30) == 0) {
                 val_temp = parse_subtraction_op(argument->child->next);
             } else if (strncmp(argument->child->valuestring, "union", 30) == 0) {
                 val_temp = parse_union_op(argument->child->next);
@@ -196,6 +222,8 @@ Value* parse_base_type(cJSON* argument) {
                 val_temp = parse_intersect_op(argument->child->next);
             } else if (strncmp(argument->child->valuestring, "is-function", 30) == 0) {
                 val_temp = parse_is_func_op(argument->child->next);
+            } else if (strncmp(argument->child->valuestring, "apply-function", 30) == 0) {
+                val_temp = parse_apply_func_op(argument->child->next);
             } else if (strncmp(argument->child->valuestring, "domain", 30) == 0) {
                 val_temp = parse_dom_op(argument->child->next);
             } else if (strncmp(argument->child->valuestring, "range", 30) == 0) {
@@ -300,6 +328,7 @@ Value* parse_union_op(cJSON* args) {
 
     Value* set_temp = 0;
     Value* value = create_empty_val(SET);
+    create_set(&value->val.s);
 
     Value* val_temp = 0;
 
@@ -346,7 +375,6 @@ Value* parse_intersect_op(cJSON* args) {
         /* FIXME: Check argument is a set */
 
         intersection(val_temp->val.s, set_temp->val.s, value->val.s);
-        printf("Intersection: "); print_type(val_temp, stdout); printf("\n");
     } else {
         /* If there aren't enough argument, set value to false */
         value->val.i = 0;

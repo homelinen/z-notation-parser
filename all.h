@@ -50,7 +50,7 @@ int set_membership(Value element, Set set);
 int isFunction(Value*);
 Set* func_dom(Value*);
 Set* func_ran(x2);
-Value func_application(Set*);
+Value* apply_func(Value*, Value*);
 int set_contents_equality(Set*, Set*);
 void intersection(Set*, Set*, Set*);
 void subtraction(Set*, Set*, Set*);

@@ -155,7 +155,7 @@
                     "variable" : "x8"
                   },
                 {
-                    "operator" : "subtraction",
+                    "operator" : "union",
                     "arguments" : [
                         {
                             "variable" : "x2"
@@ -188,14 +188,19 @@
                         {
                             "variable" : "x2"
                           },
-                        {
-                            "operator" : "tuple",
+                          {   "operator" : "set",
                             "arguments" : [
-                                3,
-                                4
-                              ]
-                          }
-                      ]
+                                
+                                {
+                                    "operator" : "tuple",
+                                    "arguments" : [
+                                        3,
+                                        4
+                                      ]
+                                  }
+                            
+                      ] }
+                          ]
                   }
               ]
           },
@@ -239,7 +244,7 @@
                 {
                     "variable" : "x21"
                   },
-                5
+                2
               ]
           },
         {
