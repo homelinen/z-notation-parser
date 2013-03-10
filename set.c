@@ -175,15 +175,16 @@ void set_union(Set* first, Set* second, Set** result, int is_first) {
  * second - The set to compare against
  * result - Where the result is placed
  */
-void subtraction(Set* first, Set* second, Set* result) {
+void subtraction(Set* first, Set* second, Set** result) {
 
-    if (result->head) {
-        memcpy(result, first, sizeof(Set));
+    if (first) {
+        *result = copy_set(&first);
+        first = 0;
     }
 
     if (result != 0 && second != 0) {
 
-        if (result->next != 0) {
+        if ((*result)->next != 0) {
 
             // Copy the second set
             Set* sec_temp = (Set*) (malloc ( sizeof (Set) ));
@@ -193,11 +194,11 @@ void subtraction(Set* first, Set* second, Set* result) {
             do {
 
                 // Check if the children are equal
-                if (value_equality(&(result->next->val), &(sec_temp->val))) {
+                if (value_equality(&((*result)->next->val), &(sec_temp->val))) {
                     //Set* next = result->next;
                     // Change the current next pointer to the child's child
                     // Remove the child node from the list
-                    result->next = result->next->next;
+                    (*result)->next = (*result)->next->next;
 
                     // Remove next from memory
                     //
@@ -212,7 +213,7 @@ void subtraction(Set* first, Set* second, Set* result) {
                 }
             } while (sec_temp != 0);
             // Subtract all of the second elements from the next element
-            subtraction(first, second, result->next);
+            subtraction(first, second, &(*result)->next);
         }
     }
 }
@@ -406,7 +407,6 @@ int func_is_injective(Value* func) {
 
             temp_func = temp_func->next;
         }
-        printf("Win\n");
         
         return 1;
     }

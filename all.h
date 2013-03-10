@@ -56,7 +56,7 @@ int func_is_injective(Value*);
 Value* apply_func(Value*, Value*);
 int set_contents_equality(Set*, Set*);
 void intersection(Set*, Set*, Set*);
-void subtraction(Set*, Set*, Set*);
+void subtraction(Set*, Set*, Set**);
 
 /*
  * Value functions

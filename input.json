@@ -209,10 +209,15 @@
                             "variable" : "x2"
                           },
                         {
-                            "operator" : "tuple",
+                            "operator" : "set",
                             "arguments" : [
-                                3,
-                                4
+                                {
+                                    "operator" : "tuple",
+                                    "arguments" : [
+                                        3,
+                                        4
+                                      ]
+                                  }
                               ]
                           }
                       ]

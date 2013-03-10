@@ -145,7 +145,6 @@ Value* parse_inverse_func_op(cJSON* arguments) {
     if (argument) {
 
         // Get the base type of the argument
-        printf("Inv: ");
         val_temp = parse_base_type(argument);
 
         val = func_inverse(val_temp);
@@ -235,7 +234,6 @@ Value* parse_base_type(cJSON* argument) {
              * FIXME: If the variable is undefined, handle it 
              */
             val_temp = find_var_val(argument->child->valuestring);
-            printf("Variable: "); print_type(val_temp, stdout); printf("\n");
             if (!val_temp) {
                 val_temp = create_empty_val(UNDEFINED);
             }
@@ -447,7 +445,7 @@ Value* parse_subtraction_op(cJSON* args) {
         argument = argument->next;
         set_temp = parse_base_type(argument);
 
-        subtraction(val_temp->val.s, set_temp->val.s, value->val.s);
+        subtraction(val_temp->val.s, set_temp->val.s, &value->val.s);
     } else {
         /* If there aren't enough argument, set value to false */
         value->val.i = 0;
