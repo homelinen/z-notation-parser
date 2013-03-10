@@ -43,13 +43,14 @@ struct _Set {
  */
 void create_set(Set **set_new);
 void destroy_set(Set*); 
+Set* copy_set(Set **);
 void insert_el(Value key, Set **el);
 void print_set(Set*, FILE*);
-void set_union(Set*, Set*, Set*);
+void set_union(Set*, Set*, Set**, int);
 int set_membership(Value element, Set set);
 int isFunction(Value*);
 Set* func_dom(Value*);
-Set* func_ran(x2);
+Set* func_ran(Value*);
 Value* func_inverse(Value*);
 int func_is_injective(Value*);
 Value* apply_func(Value*, Value*);
@@ -62,6 +63,7 @@ void subtraction(Set*, Set*, Set*);
  */
 Value create_empty_value(int);
 Value* create_empty_val(int);
+Value* copy_value(Value);
 void destroy_value(Value*); 
 void print_type(Value*, FILE*);
 int value_equality(Value*, Value*);
@@ -72,6 +74,7 @@ int value_equality(Value*, Value*);
 void print_pair(Pair*, FILE*);
 Value create_pair(Value*, Value*);
 Value* create_empty_pair(); 
+Pair* copy_pair(Pair*);
 void destroy_pair(Pair*); 
 void pair_invert(Pair*);
 int pair_equality(Pair*, Pair*);

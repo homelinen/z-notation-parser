@@ -175,7 +175,7 @@
                     "variable" : "x9"
                   },
                 {
-                    "operator" : "intersection",
+                    "operator" : "union",
                     "arguments" : [
                         {
                             "variable" : "x2"
@@ -294,7 +294,7 @@
             "operator" : "equal",
             "arguments" : [
                 {
-                    "variable" : "x21"
+                    "variable" : "x20"
                   },
                 {
                     "operator" : "set",
@@ -328,16 +328,16 @@
             "operator" : "equal",
             "arguments" : [
                 {
-                    "variable" : "x22"
+                    "variable" : "x21"
                   },
-                5
+                2
               ]
           },
         {
             "operator" : "equal",
             "arguments" : [
                 {
-                    "variable" : "x23"
+                    "variable" : "x22"
                   },
                 {
                     "operator" : "apply-function",
@@ -356,7 +356,42 @@
             "operator" : "equal",
             "arguments" : [
                 {
+                    "variable" : "x23"
+                  },
+                {
+                    "operator" : "inverse",
+                    "arguments" : [
+                        {
+                            "variable" : "x20"
+                          }
+                      ]
+                  }
+              ]
+          },
+        {
+            "operator" : "equal",
+            "arguments" : [
+                {
                     "variable" : "x24"
+                  },
+                {
+                    "operator" : "apply-function",
+                    "arguments" : [
+                        {
+                            "variable" : "x23"
+                          },
+                        {
+                            "variable" : "x22"
+                          }
+                      ]
+                  }
+              ]
+          },
+        {
+            "operator" : "equal",
+            "arguments" : [
+                {
+                    "variable" : "x30"
                   },
                 {
                     "operator" : "is-function",

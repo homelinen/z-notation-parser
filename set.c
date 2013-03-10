@@ -46,6 +46,32 @@ void create_set(Set **set_new) {
     (*set_new)->head = 1;
 }
 
+/**
+ * Build a Set with the same contents, but in different memory
+ */
+Set* copy_set(Set **set_old) {
+    Set* new_set = (Set*) malloc( sizeof ( Set ) );
+    memcpy(new_set, *set_old, sizeof( Set ));
+
+    Set* temp_n = new_set;
+    Set* temp_set;
+
+    // Go through each element of the shallow copied set
+    while (temp_n->next) {
+        
+        temp_set = (Set*) malloc( sizeof (Set) );
+
+        // Copy the set
+        memcpy(temp_set, temp_n->next, sizeof(Set));
+
+        temp_set->val = *(copy_value(temp_set->val));
+        temp_n->next = temp_set;
+        temp_n = temp_n->next;
+    }
+
+    return new_set;
+}
+
 /** 
  * Insert the key onto the end of the Set
  **/
@@ -120,21 +146,23 @@ Value* apply_func(Value* func, Value* arg) {
  *
  * first - The initial set and the set that second is appended to
  *
+ * FIXME: Set first to 0 after the first run, makes sense, reduces stack size
  * Returns the union in first, through pointers
  **/
-void set_union(Set* first, Set* second, Set* result) {
+void set_union(Set* first, Set* second, Set** result, int is_first) {
 
-    if (result->head) {
-        memcpy(result, first, sizeof(Set));
+    if (is_first) {
+        *result = copy_set(&first);
+        is_first = 0;
     }
 
     //Assuming the head of the set is always non-zero
 
     if (second->next != 0) {
         //Recursively add the next val of second to first
-        insert_el(second->next->val, &result);
+        insert_el(second->next->val, result);
 
-        set_union(first, second->next, result);
+        set_union(first, second->next, result, 0);
     }
 }
 

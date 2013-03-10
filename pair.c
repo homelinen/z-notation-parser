@@ -6,6 +6,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "constants.h"
 #include "all.h"
@@ -41,6 +42,19 @@ Value* create_empty_pair() {
     value_pair->val.p = p;
 
     return value_pair;
+}
+
+/**
+ * Perform a deep copy on a pair, make a new pair with copies of the branches
+ */
+Pair* copy_pair(Pair* pair) {
+   Pair* new_pair = (Pair*) malloc(sizeof( Pair ));
+   memcpy(new_pair, pair, sizeof (Pair));
+
+   new_pair->left = copy_value(*pair->left);
+   new_pair->right = copy_value(*pair->right);
+
+   return new_pair;
 }
 
 /*

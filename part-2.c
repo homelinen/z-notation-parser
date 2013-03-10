@@ -387,7 +387,7 @@ Value* parse_union_op(cJSON* args) {
 
         /* FIXME: Check argument is a set */
 
-        set_union(val_temp->val.s, set_temp->val.s, value->val.s);
+        set_union(val_temp->val.s, set_temp->val.s, &value->val.s, 1);
     } else {
         /* If there aren't enough argument, set value to false */
         value->val.i = 0;

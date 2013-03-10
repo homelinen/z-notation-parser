@@ -7,6 +7,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "constants.h"
 #include "all.h"
@@ -101,6 +102,29 @@ Value* create_empty_val(int type) {
             printf("Warning: undefined!\n");
             break;
     }
+
+    return new_val;
+}
+
+/**
+ * Perform a deep copy on a value
+ */
+Value* copy_value(Value val) {
+   
+    Value* new_val = (Value*) malloc(sizeof (Value));
+    memcpy(new_val, &val, sizeof(Value));
+
+    // Need to create new versions of the container
+    switch(val.type) {
+        case SET:
+            new_val->val.s = copy_set(&val.val.s);
+            break;
+        case PAIR:
+            new_val->val.p = copy_pair(val.val.p);
+            break;
+        // Can ignore integers
+    }
+
 
     return new_val;
 }
