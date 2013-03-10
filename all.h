@@ -51,6 +51,7 @@ int isFunction(Value*);
 Set* func_dom(Value*);
 Set* func_ran(x2);
 Value* func_inverse(Value*);
+int func_is_injective(Value*);
 Value* apply_func(Value*, Value*);
 int set_contents_equality(Set*, Set*);
 void intersection(Set*, Set*, Set*);

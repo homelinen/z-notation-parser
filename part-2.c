@@ -115,6 +115,25 @@ Value* parse_is_func_op(cJSON* arguments) {
     return val;
 }
 
+Value* parse_is_inj_func_op(cJSON* arguments) {
+    
+    /* Traverse into the first child of the array */
+    cJSON* argument = arguments->child;
+
+    Value* val = create_empty_val(INTEGER);
+    Value* val_temp = 0;
+
+    if (argument) {
+
+        // Get the base type of the argument
+        val_temp = parse_base_type(argument);
+
+        val->val.i = func_is_injective(val_temp);
+    }
+
+    return val;
+}
+
 Value* parse_inverse_func_op(cJSON* arguments) {
     
     /* Traverse into the first child of the array */
@@ -241,6 +260,8 @@ Value* parse_base_type(cJSON* argument) {
                 val_temp = parse_union_op(argument->child->next);
             } else if (strncmp(argument->child->valuestring, "intersection", 30) == 0) {
                 val_temp = parse_intersect_op(argument->child->next);
+            } else if (strncmp(argument->child->valuestring, "is-injective", 30) == 0) {
+                val_temp = parse_is_inj_func_op(argument->child->next);
             } else if (strncmp(argument->child->valuestring, "is-function", 30) == 0) {
                 val_temp = parse_is_func_op(argument->child->next);
             } else if (strncmp(argument->child->valuestring, "apply-function", 30) == 0) {

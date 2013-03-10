@@ -343,6 +343,50 @@ Value* func_inverse(Value* func) {
 }
 
 /**
+ * Check whether a function is injective or not
+ *
+ * An injective function is one where the value part of a key, value pair is unique.
+ *
+ * So no two inputs can map to the same output
+ */
+int func_is_injective(Value* func) {
+    if (isFunction(func)) {
+
+        Set* temp_func = func->val.s;
+
+        // FIXME: Length is a little unpredictable
+        // Will generally make too large arrays
+        Value* prev_keys[func->val.s->length];
+        int key_count = 0;
+        int equal_count = 0;
+
+        int i;
+
+        while (temp_func->next) {
+            
+            equal_count = 0;
+
+            // Go through all the previously found keys
+            for (i = 0; i < key_count; i++) {
+                if (value_equality(temp_func->next->val.val.p->right, prev_keys[i])) {
+                    return 0;
+                }
+            }
+
+            prev_keys[key_count] = temp_func->next->val.val.p->right;
+            key_count++;
+
+            temp_func = temp_func->next;
+        }
+        printf("Win\n");
+        
+        return 1;
+    }
+
+    return 0;
+}
+
+/**
  * Check if an element exists in the set
  */
 int set_membership(Value element, Set set) {
