@@ -50,6 +50,7 @@ int set_membership(Value element, Set set);
 int isFunction(Value*);
 Set* func_dom(Value*);
 Set* func_ran(x2);
+Value* func_inverse(Value*);
 Value* apply_func(Value*, Value*);
 int set_contents_equality(Set*, Set*);
 void intersection(Set*, Set*, Set*);
@@ -71,6 +72,7 @@ void print_pair(Pair*, FILE*);
 Value create_pair(Value*, Value*);
 Value* create_empty_pair(); 
 void destroy_pair(Pair*); 
+void pair_invert(Pair*);
 int pair_equality(Pair*, Pair*);
 
 

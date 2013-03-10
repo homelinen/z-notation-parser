@@ -311,6 +311,37 @@ Set* func_ran(Value* func) {
     return temp_set;
 }
 
+/*
+ * Inverts a function so that all the inputs become the outputs.
+ * Thus undoing the original function
+ *
+ * A function must be injective to be inversive
+ */
+Value* func_inverse(Value* func) {
+    if (!isFunction(func)) {
+        // return undefined
+    }
+
+    Set* inv_func;
+    create_set(&inv_func);
+    memcpy(inv_func, func->val.s, sizeof(Set));
+
+    Set* temp_func = inv_func;
+
+    while (temp_func->next) {
+        
+        // Swap the values in the pair
+        pair_invert(temp_func->next->val.val.p);
+        temp_func = temp_func->next;
+    }
+
+    // Build the return val
+    Value* ret_var = create_empty_val(SET);
+    ret_var->val.s = inv_func;
+
+    return ret_var;
+}
+
 /**
  * Check if an element exists in the set
  */

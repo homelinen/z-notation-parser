@@ -71,6 +71,21 @@ void print_pair(Pair* p, FILE* f) {
 }
 
 /**
+ * Inverts a pair
+ * Uses the XOR swapping algorithm
+ */
+void pair_invert(Pair* tuple) {
+
+    // If the same, no need to swap
+    if (!value_equality(tuple->left, tuple->right)) { 
+        // Store a temporary pointer
+        Value* temp_left = tuple->left;
+        tuple->left = tuple->right;
+        tuple->right = temp_left;
+    } 
+}
+
+/**
  * Check if two pairs are equal
  *
  * first - The first pair

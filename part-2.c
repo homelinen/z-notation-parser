@@ -115,6 +115,26 @@ Value* parse_is_func_op(cJSON* arguments) {
     return val;
 }
 
+Value* parse_inverse_func_op(cJSON* arguments) {
+    
+    /* Traverse into the first child of the array */
+    cJSON* argument = arguments->child;
+
+    Value* val = create_empty_val(SET);
+    Value* val_temp = 0;
+
+    if (argument) {
+
+        // Get the base type of the argument
+        printf("Inv: ");
+        val_temp = parse_base_type(argument);
+
+        val = func_inverse(val_temp);
+    }
+
+    return val;
+}
+
 Value* parse_apply_func_op(cJSON* arguments) {
     
     /* Traverse into the first child of the array */
@@ -196,6 +216,7 @@ Value* parse_base_type(cJSON* argument) {
              * FIXME: If the variable is undefined, handle it 
              */
             val_temp = find_var_val(argument->child->valuestring);
+            printf("Variable: "); print_type(val_temp, stdout); printf("\n");
             if (!val_temp) {
                 val_temp = create_empty_val(UNDEFINED);
             }
@@ -228,6 +249,8 @@ Value* parse_base_type(cJSON* argument) {
                 val_temp = parse_dom_op(argument->child->next);
             } else if (strncmp(argument->child->valuestring, "range", 30) == 0) {
                 val_temp = parse_ran_op(argument->child->next);
+            } else if (strncmp(argument->child->valuestring, "inverse", 30) == 0) {
+                val_temp = parse_inverse_func_op(argument->child->next);
             } else {
                 fprintf(stderr, "BAD INPUT: Undefined operator: %s\n", argument->child->valuestring);
                 fprintf(output_file, "BAD INPUT\n");

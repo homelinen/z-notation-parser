@@ -95,6 +95,26 @@
                     "variable" : "x5"
                   },
                 {
+                    "operator" : "is-function",
+                    "arguments" : [
+                        {
+                            "operator" : "set",
+                            "arguments" : [
+                                1,
+                                2
+                              ]
+                          }
+                      ]
+                  }
+              ]
+          },
+        {
+            "operator" : "equal",
+            "arguments" : [
+                {
+                    "variable" : "x6"
+                  },
+                {
                     "operator" : "domain",
                     "arguments" : [
                         {
@@ -108,7 +128,7 @@
             "operator" : "equal",
             "arguments" : [
                 {
-                    "variable" : "x6"
+                    "variable" : "x7"
                   },
                 {
                     "operator" : "range",
@@ -124,7 +144,7 @@
             "operator" : "equal",
             "arguments" : [
                 {
-                    "variable" : "x7"
+                    "variable" : "x8"
                   },
                 {
                     "operator" : "intersection",
@@ -152,10 +172,10 @@
             "operator" : "equal",
             "arguments" : [
                 {
-                    "variable" : "x8"
+                    "variable" : "x9"
                   },
                 {
-                    "operator" : "union",
+                    "operator" : "intersection",
                     "arguments" : [
                         {
                             "variable" : "x2"
@@ -180,7 +200,7 @@
             "operator" : "equal",
             "arguments" : [
                 {
-                    "variable" : "x9"
+                    "variable" : "x10"
                   },
                 {
                     "operator" : "set-difference",
@@ -188,19 +208,14 @@
                         {
                             "variable" : "x2"
                           },
-                          {   "operator" : "set",
+                        {
+                            "operator" : "tuple",
                             "arguments" : [
-                                
-                                {
-                                    "operator" : "tuple",
-                                    "arguments" : [
-                                        3,
-                                        4
-                                      ]
-                                  }
-                            
-                      ] }
-                          ]
+                                3,
+                                4
+                              ]
+                          }
+                      ]
                   }
               ]
           },
@@ -208,7 +223,78 @@
             "operator" : "equal",
             "arguments" : [
                 {
-                    "variable" : "x20"
+                    "variable" : "x11"
+                  },
+                {
+                    "operator" : "inverse",
+                    "arguments" : [
+                        {
+                            "variable" : "x2"
+                          }
+                      ]
+                  }
+              ]
+          },
+        {
+            "operator" : "equal",
+            "arguments" : [
+                {
+                    "variable" : "x12"
+                  },
+                {
+                    "operator" : "is-injective",
+                    "arguments" : [
+                        {
+                            "variable" : "x2"
+                          }
+                      ]
+                  }
+              ]
+          },
+        {
+            "operator" : "equal",
+            "arguments" : [
+                {
+                    "variable" : "x12"
+                  },
+                {
+                    "operator" : "is-injective",
+                    "arguments" : [
+                        {
+                            "operator" : "set",
+                            "arguments" : [
+                                {
+                                    "operator" : "tuple",
+                                    "arguments" : [
+                                        1,
+                                        2
+                                      ]
+                                  },
+                                {
+                                    "operator" : "tuple",
+                                    "arguments" : [
+                                        2,
+                                        2
+                                      ]
+                                  },
+                                {
+                                    "operator" : "tuple",
+                                    "arguments" : [
+                                        3,
+                                        3
+                                      ]
+                                  }
+                              ]
+                          }
+                      ]
+                  }
+              ]
+          },
+        {
+            "operator" : "equal",
+            "arguments" : [
+                {
+                    "variable" : "x21"
                   },
                 {
                     "operator" : "set",
@@ -242,16 +328,16 @@
             "operator" : "equal",
             "arguments" : [
                 {
-                    "variable" : "x21"
+                    "variable" : "x22"
                   },
-                2
+                5
               ]
           },
         {
             "operator" : "equal",
             "arguments" : [
                 {
-                    "variable" : "x22"
+                    "variable" : "x23"
                   },
                 {
                     "operator" : "apply-function",
@@ -261,6 +347,38 @@
                           },
                         {
                             "variable" : "x21"
+                          }
+                      ]
+                  }
+              ]
+          },
+        {
+            "operator" : "equal",
+            "arguments" : [
+                {
+                    "variable" : "x24"
+                  },
+                {
+                    "operator" : "is-function",
+                    "arguments" : [
+                        {
+                            "operator" : "set",
+                            "arguments" : [
+                                {
+                                    "operator" : "tuple",
+                                    "arguments" : [
+                                        1,
+                                        2
+                                      ]
+                                  },
+                                {
+                                    "operator" : "tuple",
+                                    "arguments" : [
+                                        1,
+                                        3
+                                      ]
+                                  }
+                              ]
                           }
                       ]
                   }
