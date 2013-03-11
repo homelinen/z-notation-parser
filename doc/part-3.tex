@@ -1,0 +1,58 @@
+\documentclass[DIN, pagenumber=false, fontsize=11pt, parskip=half]{scrartcl}
+
+\usepackage{ngerman}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+\usepackage{xyling}
+
+\usepackage{hyperref}
+
+% for matlab code
+% bw = blackwhite - optimized for print, otherwise source is colored
+%\usepackage[framed,numbered,bw]{mcode}
+
+% for other code
+%\usepackage{listings}
+
+\setlength{\parindent}{0em}
+
+% set section in CM
+\setkomafont{section}{\normalfont\bfseries\Large}
+
+\newcommand{\mytitle}[1]{{\noindent\Large\textbf{#1}}}
+\newcommand{\mysection}[1]{\textbf{\section*{#1}}}
+\newcommand{\mysubsection}[2]{\romannumeral #1) #2}
+
+%===================================
+\begin{document}
+
+\noindent\textbf{Foundations 2} \hfill \textbf{Heriot Watt University}\\
+\hfill Calum Gilchrist\\
+
+\mytitle{Foundations 2 Assignment: Part 3\hfill \today}
+
+
+%===================================
+
+\section{Part 3}
+
+\texttt{part-3.c} is the main file for the third part of the assignment.
+
+part-3.c expects there to be a file called input.json to run, prints an appropriate error if this is not the case, however.
+Output is printed to the file \textbf{output.txt}.
+
+\section{New Methods}
+
+\begin{itemize}
+    \item \emph{domain} Added a domain function. Returns a set of all the possible arguments that can be given to a function.
+    \item \emph{range} - The range function returns a set of all the possible outputs from a function
+    \item \emph{is function} - Added a boolean test to find out if an expression is a function. A function can be defined a set of argument → value pairs.
+    \item \emph{Function Application} - Given a function and an argument, return the output of the function for that argument. If the arguments can not be found in the function, the result is undefined.
+    \item \emph{inverse} - Inverts all of the tuple in a function. That is, swaps all of the keys and values. If an inverse of a function is applied after a function application, then the initial input can be found.
+    \item \emph{Is Injective} - Boolean function to find if a sets function is injective. An injective function is one that for every first component of the tuples, there is a unique second tuple. That is, no two keys can map to the same result.
+\end{itemize}
+
+\emph{Intersection}, \emph{union} and \emph{set difference} were previously defined in part 1. However, they have since been updated to use a deep copy. As they were originally destructive functions.
+
+\end{document}
