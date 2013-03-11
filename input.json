@@ -28,6 +28,369 @@
                     "operator" : "set",
                     "arguments" : [
                         {
+                            "variable" : "x0"
+                          },
+                        {
+                            "variable" : "x1"
+                          }
+                      ]
+                  }
+              ]
+          },
+        {
+            "operator" : "equal",
+            "arguments" : [
+                {
+                    "variable" : "x3"
+                  },
+                {
+                    "operator" : "set",
+                    "arguments" : [
+                        {
+                            "operator" : "tuple",
+                            "arguments" : [
+                                1,
+                                2
+                              ]
+                          },
+                        {
+                            "operator" : "tuple",
+                            "arguments" : [
+                                3,
+                                4
+                              ]
+                          }
+                      ]
+                  }
+              ]
+          },
+        {
+            "operator" : "equal",
+            "arguments" : [
+                {
+                    "variable" : "x4"
+                  },
+                {
+                    "operator" : "is-function",
+                    "arguments" : [
+                        {
+                            "variable" : "x2"
+                          }
+                      ]
+                  }
+              ]
+          },
+        {
+            "operator" : "equal",
+            "arguments" : [
+                {
+                    "variable" : "x5"
+                  },
+                {
+                    "operator" : "is-function",
+                    "arguments" : [
+                        {
+                            "variable" : "x3"
+                          }
+                      ]
+                  }
+              ]
+          },
+        {
+            "operator" : "equal",
+            "arguments" : [
+                {
+                    "variable" : "x6"
+                  },
+                {
+                    "operator" : "equal",
+                    "arguments" : [
+                        {
+                            "variable" : "x2"
+                          },
+                        {
+                            "operator" : "set",
+                            "arguments" : [
+                                {
+                                    "variable" : "x0"
+                                  },
+                                2
+                              ]
+                          }
+                      ]
+                  }
+              ]
+          },
+        {
+            "operator" : "equal",
+            "arguments" : [
+                {
+                    "variable" : "x7"
+                  },
+                {
+                    "operator" : "apply-function",
+                    "arguments" : [
+                        {
+                            "variable" : "x3"
+                          },
+                        {
+                            "variable" : "x0"
+                          }
+                      ]
+                  }
+              ]
+          },
+        {
+            "operator" : "equal",
+            "arguments" : [
+                {
+                    "variable" : "x8"
+                  },
+                {
+                    "operator" : "tuple",
+                    "arguments" : [
+                        {
+                            "operator" : "tuple",
+                            "arguments" : [
+                                0,
+                                1
+                              ]
+                          },
+                        {
+                            "operator" : "tuple",
+                            "arguments" : [
+                                3,
+                                {
+                                    "operator" : "tuple",
+                                    "arguments" : [
+                                        4,
+                                        5
+                                      ]
+                                  }
+                              ]
+                          }
+                      ]
+                  }
+              ]
+          },
+        {
+            "operator" : "equal",
+            "arguments" : [
+                {
+                    "variable" : "x9"
+                  },
+                {
+                    "operator" : "set",
+                    "arguments" : [
+                        {
+                            "variable" : "x8"
+                          }
+                      ]
+                  }
+              ]
+          },
+        {
+            "operator" : "equal",
+            "arguments" : [
+                {
+                    "variable" : "x10"
+                  },
+                {
+                    "operator" : "set",
+                    "arguments" : [
+                        {
+                            "operator" : "tuple",
+                            "arguments" : [
+                                0,
+                                4
+                              ]
+                          },
+                        {
+                            "operator" : "tuple",
+                            "arguments" : [
+                                1,
+                                6
+                              ]
+                          },
+                        {
+                            "operator" : "tuple",
+                            "arguments" : [
+                                2,
+                                1
+                              ]
+                          }
+                      ]
+                  }
+              ]
+          },
+        {
+            "operator" : "equal",
+            "arguments" : [
+                {
+                    "variable" : "x11"
+                  },
+                {
+                    "operator" : "apply-function",
+                    "arguments" : [
+                        {
+                            "variable" : "x3"
+                          },
+                        {
+                            "variable" : "x1"
+                          }
+                      ]
+                  }
+              ]
+          },
+        {
+            "operator" : "equal",
+            "arguments" : [
+                {
+                    "variable" : "x12"
+                  },
+                -1
+              ]
+          },
+        {
+            "operator" : "equal",
+            "arguments" : [
+                {
+                    "variable" : "x13"
+                  },
+                {
+                    "operator" : "member",
+                    "arguments" : [
+                        {
+                            "variable" : "x12"
+                          },
+                        {
+                            "variable" : "x2"
+                          }
+                      ]
+                  }
+              ]
+          },
+        {
+            "operator" : "equal",
+            "arguments" : [
+                {
+                    "variable" : "x14"
+                  },
+                {
+                    "operator" : "member",
+                    "arguments" : [
+                        {
+                            "variable" : "x0"
+                          },
+                        {
+                            "variable" : "x2"
+                          }
+                      ]
+                  }
+              ]
+          },
+        {
+            "operator" : "equal",
+            "arguments" : [
+                {
+                    "variable" : "x15"
+                  },
+                {
+                    "operator" : "equal",
+                    "arguments" : [
+                        {
+                            "variable" : "x2"
+                          },
+                        {
+                            "operator" : "set",
+                            "arguments" : [
+                                {
+                                    "variable" : "x0"
+                                  },
+                                {
+                                    "variable" : "x1"
+                                  },
+                                {
+                                    "variable" : "x1"
+                                  }
+                              ]
+                          }
+                      ]
+                  }
+              ]
+          },
+        {
+            "operator" : "equal",
+            "arguments" : [
+                {
+                    "variable" : "x16"
+                  },
+                {
+                    "operator" : "apply-function",
+                    "arguments" : [
+                        {
+                            "variable" : "x8"
+                          },
+                        {
+                            "operator" : "tuple",
+                            "arguments" : [
+                                0,
+                                {
+                                    "operator" : "apply-function",
+                                    "arguments" : [
+                                        {
+                                            "variable" : "x10"
+                                          },
+                                        2
+                                      ]
+                                  }
+                              ]
+                          }
+                      ]
+                  }
+              ]
+          },
+        {
+            "operator" : "equal",
+            "arguments" : [
+                {
+                    "variable" : "x17"
+                  },
+                {
+                    "operator" : "apply-function",
+                    "arguments" : [
+                        {
+                            "variable" : "x9"
+                          },
+                        {
+                            "operator" : "tuple",
+                            "arguments" : [
+                                0,
+                                {
+                                    "operator" : "apply-function",
+                                    "arguments" : [
+                                        {
+                                            "variable" : "x10"
+                                          },
+                                        2
+                                      ]
+                                  }
+                              ]
+                          }
+                      ]
+                  }
+              ]
+          },
+        {
+            "operator" : "equal",
+            "arguments" : [
+                {
+                    "variable" : "x20"
+                  },
+                {
+                    "operator" : "set",
+                    "arguments" : [
+                        {
                             "operator" : "tuple",
                             "arguments" : [
                                 1,
@@ -56,23 +419,7 @@
             "operator" : "equal",
             "arguments" : [
                 {
-                    "variable" : "x3"
-                  },
-                {
-                    "operator" : "is-function",
-                    "arguments" : [
-                        {
-                            "variable" : "x2"
-                          }
-                      ]
-                  }
-              ]
-          },
-        {
-            "operator" : "equal",
-            "arguments" : [
-                {
-                    "variable" : "x4"
+                    "variable" : "x21"
                   },
                 {
                     "operator" : "is-function",
@@ -92,7 +439,7 @@
             "operator" : "equal",
             "arguments" : [
                 {
-                    "variable" : "x5"
+                    "variable" : "x22"
                   },
                 {
                     "operator" : "is-function",
@@ -112,13 +459,13 @@
             "operator" : "equal",
             "arguments" : [
                 {
-                    "variable" : "x6"
+                    "variable" : "x23"
                   },
                 {
                     "operator" : "domain",
                     "arguments" : [
                         {
-                            "variable" : "x2"
+                            "variable" : "x20"
                           }
                       ]
                   }
@@ -128,13 +475,13 @@
             "operator" : "equal",
             "arguments" : [
                 {
-                    "variable" : "x7"
+                    "variable" : "x24"
                   },
                 {
                     "operator" : "range",
                     "arguments" : [
                         {
-                            "variable" : "x2"
+                            "variable" : "x20"
                           }
                       ]
                   }
@@ -144,13 +491,13 @@
             "operator" : "equal",
             "arguments" : [
                 {
-                    "variable" : "x8"
+                    "variable" : "x25"
                   },
                 {
                     "operator" : "intersection",
                     "arguments" : [
                         {
-                            "variable" : "x2"
+                            "variable" : "x20"
                           },
                         {
                             "operator" : "set",
@@ -172,13 +519,13 @@
             "operator" : "equal",
             "arguments" : [
                 {
-                    "variable" : "x9"
+                    "variable" : "x26"
                   },
                 {
                     "operator" : "union",
                     "arguments" : [
                         {
-                            "variable" : "x2"
+                            "variable" : "x20"
                           },
                         {
                             "operator" : "set",
@@ -200,13 +547,13 @@
             "operator" : "equal",
             "arguments" : [
                 {
-                    "variable" : "x10"
+                    "variable" : "x27"
                   },
                 {
                     "operator" : "set-difference",
                     "arguments" : [
                         {
-                            "variable" : "x2"
+                            "variable" : "x20"
                           },
                         {
                             "operator" : "set",
@@ -228,13 +575,13 @@
             "operator" : "equal",
             "arguments" : [
                 {
-                    "variable" : "x11"
+                    "variable" : "x28"
                   },
                 {
                     "operator" : "inverse",
                     "arguments" : [
                         {
-                            "variable" : "x2"
+                            "variable" : "x20"
                           }
                       ]
                   }
@@ -244,7 +591,7 @@
             "operator" : "equal",
             "arguments" : [
                 {
-                    "variable" : "x12"
+                    "variable" : "x29"
                   },
                 {
                     "operator" : "is-injective",
@@ -260,7 +607,7 @@
             "operator" : "equal",
             "arguments" : [
                 {
-                    "variable" : "x12"
+                    "variable" : "x30"
                   },
                 {
                     "operator" : "is-injective",
@@ -299,7 +646,7 @@
             "operator" : "equal",
             "arguments" : [
                 {
-                    "variable" : "x20"
+                    "variable" : "x40"
                   },
                 {
                     "operator" : "set",
@@ -333,7 +680,7 @@
             "operator" : "equal",
             "arguments" : [
                 {
-                    "variable" : "x21"
+                    "variable" : "x41"
                   },
                 2
               ]
@@ -342,7 +689,7 @@
             "operator" : "equal",
             "arguments" : [
                 {
-                    "variable" : "x22"
+                    "variable" : "x42"
                   },
                 {
                     "operator" : "apply-function",
@@ -361,7 +708,7 @@
             "operator" : "equal",
             "arguments" : [
                 {
-                    "variable" : "x23"
+                    "variable" : "x43"
                   },
                 {
                     "operator" : "inverse",
@@ -377,7 +724,7 @@
             "operator" : "equal",
             "arguments" : [
                 {
-                    "variable" : "x24"
+                    "variable" : "x44"
                   },
                 {
                     "operator" : "apply-function",
@@ -396,7 +743,7 @@
             "operator" : "equal",
             "arguments" : [
                 {
-                    "variable" : "x30"
+                    "variable" : "x50"
                   },
                 {
                     "operator" : "is-function",
