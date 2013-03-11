@@ -129,14 +129,14 @@ Value* apply_func(Value* func, Value* arg) {
 
         while (set_walk->next) {
 
-            if (set_walk->next->val.val.p->left->val.i == arg->val.i) {
+            if (value_equality(set_walk->next->val.val.p->left, arg)) {
                 return set_walk->next->val.val.p->right;
             }
             set_walk = set_walk->next;
         }
     }
 
-    return 0;
+    return create_empty_val(UNDEFINED);
 }
 
 /**
