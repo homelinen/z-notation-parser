@@ -46,7 +46,7 @@ void destroy_set(Set*);
 Set* copy_set(Set **);
 void insert_el(Value key, Set **el);
 void print_set(Set*, FILE*);
-void set_union(Set*, Set*, Set**, int);
+void set_union(Set*, Set*, Set**);
 int set_membership(Value element, Set set);
 int isFunction(Value*);
 Set* func_dom(Value*);

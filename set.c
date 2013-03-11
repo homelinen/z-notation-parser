@@ -47,9 +47,11 @@ void create_set(Set **set_new) {
 }
 
 /**
- * Build a Set with the same contents, but in different memory
+ * Build a Set with the same contents, but in a different memory location
  */
 Set* copy_set(Set **set_old) {
+
+    // Make a new version of the old set
     Set* new_set = (Set*) malloc( sizeof ( Set ) );
     memcpy(new_set, *set_old, sizeof( Set ));
 
@@ -58,14 +60,16 @@ Set* copy_set(Set **set_old) {
 
     // Go through each element of the shallow copied set
     while (temp_n->next) {
-        
+    
         temp_set = (Set*) malloc( sizeof (Set) );
 
-        // Copy the set
+        // Copy the neighbour set
         memcpy(temp_set, temp_n->next, sizeof(Set));
-
-        temp_set->val = *(copy_value(temp_set->val));
         temp_n->next = temp_set;
+
+        // Make a new version of the value
+        temp_set->val = *(copy_value(temp_set->val));
+
         temp_n = temp_n->next;
     }
 
@@ -126,16 +130,23 @@ Value* apply_func(Value* func, Value* arg) {
 
     if (isFunction(func)) {
         Set* set_walk = func->val.s;
+        Pair* cur_tuple;
 
         while (set_walk->next) {
 
-            if (value_equality(set_walk->next->val.val.p->left, arg)) {
-                return set_walk->next->val.val.p->right;
+            cur_tuple = set_walk->next->val.val.p;
+
+            // Check if the key for every pair matches the argument
+            if (value_equality(cur_tuple->left, arg)) {
+
+                // Return the value that matches the key of the argument
+                return cur_tuple->right;
             }
             set_walk = set_walk->next;
         }
     }
 
+    // If reached the end of the set, the result is undefined
     return create_empty_val(UNDEFINED);
 }
 
@@ -149,11 +160,11 @@ Value* apply_func(Value* func, Value* arg) {
  * FIXME: Set first to 0 after the first run, makes sense, reduces stack size
  * Returns the union in first, through pointers
  **/
-void set_union(Set* first, Set* second, Set** result, int is_first) {
+void set_union(Set* first, Set* second, Set** result) {
 
-    if (is_first) {
+    if (first) {
         *result = copy_set(&first);
-        is_first = 0;
+        first = 0;
     }
 
     //Assuming the head of the set is always non-zero
@@ -162,7 +173,7 @@ void set_union(Set* first, Set* second, Set** result, int is_first) {
         //Recursively add the next val of second to first
         insert_el(second->next->val, result);
 
-        set_union(first, second->next, result, 0);
+        set_union(first, second->next, result);
     }
 }
 
@@ -293,7 +304,8 @@ int isFunction(Value* func){
 }
 
 /*
- * Return the domain of a function
+ * Return the domain of a function, that is, a set of all the keys
+ * in pairs in the function
  */
 Set* func_dom(Value* func) {
 
@@ -318,6 +330,10 @@ Set* func_dom(Value* func) {
 
 /*
  * Return the range of a function
+ *
+ * The range is all the results the function can return.
+ *
+ * Returns a set of possible values out of the function
  */
 Set* func_ran(Value* func) {
 
@@ -347,13 +363,12 @@ Set* func_ran(Value* func) {
  * A function must be injective to be inversive
  */
 Value* func_inverse(Value* func) {
-    if (!isFunction(func)) {
-        // return undefined
+    // If it is not a function, or is non-injective then it must be undefined
+    if (!isFunction(func) || !func_is_injective(func)) {
+        return create_empty_val(UNDEFINED);
     }
 
-    Set* inv_func;
-    create_set(&inv_func);
-    memcpy(inv_func, func->val.s, sizeof(Set));
+    Set* inv_func = copy_set(&func->val.s);
 
     Set* temp_func = inv_func;
 
@@ -394,15 +409,16 @@ int func_is_injective(Value* func) {
         while (temp_func->next) {
             
             equal_count = 0;
+            Value* tuple_result = temp_func->next->val.val.p->right;
 
             // Go through all the previously found keys
             for (i = 0; i < key_count; i++) {
-                if (value_equality(temp_func->next->val.val.p->right, prev_keys[i])) {
+                if (value_equality(tuple_result, prev_keys[i])) {
                     return 0;
                 }
             }
 
-            prev_keys[key_count] = temp_func->next->val.val.p->right;
+            prev_keys[key_count] = tuple_result;
             key_count++;
 
             temp_func = temp_func->next;
@@ -443,7 +459,6 @@ int set_membership(Value element, Set set) {
  * DOES NOT CHECK LENGTH OF SETS (Check externally)
  * TODO: Make a set comparison method that checks length and contents
  *
- 
  * If the second set is longer than the first, then those extra values go unchecked
  * If something in the second set isn't in the first, the test could still pass. Bad.
  *
