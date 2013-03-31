@@ -357,9 +357,17 @@ Set* func_ran(Value* func) {
 }
 
 /**
- * Return a function for the diagonal of a function
+ * Return apply an enumerator to a function.
+ *
+ * Can be used to check if a set is countable
+ *
  * func = V1
  * enumer = V2
+ * nullReturn = V3
+ *
+ * @diagonalise(V1, V2, V3)
+ *
+ * Returns the function F, which defines a possible row in the set V1
  */
 Value* diagonalise(Value* func, Value* enumer, Value* nullReturn) {
 
@@ -379,6 +387,9 @@ Value* diagonalise(Value* func, Value* enumer, Value* nullReturn) {
         // Get the current domain element of the function
         i->val.i = cur_el->next->val.val.p->left->val.i;
 
+        // If V1(i) or V1(i)(i) are not functions the result of the function application
+        // will be undefined!
+
         // Get V1(i)(i)
         Value* application = apply_func(apply_func(func, i), i);
 
@@ -386,9 +397,14 @@ Value* diagonalise(Value* func, Value* enumer, Value* nullReturn) {
             // Attempt to enumerate V1(i)(i) on V2
             application = apply_func(enumer, application);
 
-            *temp_pair = create_pair(i, application);
+            // If the value of V2(V1(i)(i)) is undefined, skip it
+            if (application->type != UNDEFINED) {
 
-            insert_el(*temp_pair, &temp_set->val.s);
+                // Add the enumerated pair to the function F
+                *temp_pair = create_pair(i, application);
+
+                insert_el(*temp_pair, &temp_set->val.s);
+            }
         } else {
             // Add null Return to the set
             *temp_pair = create_pair(i, nullReturn);
