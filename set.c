@@ -496,17 +496,14 @@ int func_is_injective(Value* func) {
  */
 int set_membership(Value element, Set set) {
 
-    Set* set_temp = set.next;
     int found = 0;
 
-    while (set_temp && !found) {
-        if (value_equality(&element, &set_temp->val)) {
+    if (set.next) {
+        if (value_equality(&element, &set.next->val)) {
             found =  1;
         } else {
             set_membership(element, *set.next);
         }
-
-        set_temp = set_temp->next;
     }
 
     return found;
@@ -538,10 +535,11 @@ int set_contents_equality(Set* first, Set* second) {
 
             // Copy the second set
             Set* sec_temp = (Set*) (malloc ( sizeof (Set) ));
-            *sec_temp = *second;
+            *sec_temp = *second->next;
 
             // Iterate through all of the second sets children
             do {
+                
                 // Check if the children are equal
                 if (value_equality(&(first->next->val), &(sec_temp->val))) {
                     is_equal = 1;
