@@ -52,6 +52,7 @@ int isFunction(Value*);
 Set* func_dom(Value*);
 Set* func_ran(Value*);
 Value* func_inverse(Value*);
+Value* diagonalise(Value*, Value*, Value*);
 int func_is_injective(Value*);
 Value* apply_func(Value*, Value*);
 int set_contents_equality(Set*, Set*);

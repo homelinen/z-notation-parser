@@ -42,7 +42,7 @@ void create_set(Set **set_new) {
     *set_new = (Set*) malloc( sizeof ( Set ) );
     (*set_new)->val = *((Value*) malloc( sizeof ( Value )));
     (*set_new)->next = 0;
-    (*set_new)->length = 1;
+    (*set_new)->length = 0;
     (*set_new)->head = 1;
 }
 
@@ -351,6 +351,51 @@ Set* func_ran(Value* func) {
             insert_el(*temp_func->next->val.val.p->right, &temp_set);
             temp_func = temp_func->next;
         }
+    }
+
+    return temp_set;
+}
+
+/**
+ *
+ * func = V1
+ * enumer = V2
+ */
+Value* diagonalise(Value* func, Value* enumer, Value* nullReturn) {
+
+    Value* temp_set = create_empty_val(SET);
+    Value* temp_pair = create_empty_val(PAIR);
+
+    create_set(&temp_set->val.s);
+
+    Value* i = 0;
+
+    // Get the first element of the Set
+    Set* cur_el = func->val.s;
+
+    while(cur_el->next) {
+        i = create_empty_val(INTEGER);
+
+        // Get the current domain element of the function
+        i->val.i = cur_el->next->val.val.p->left->val.i;
+
+        // Get V1(i)(i)
+        Value* application = apply_func(apply_func(func, i), i);
+
+        if (application->type != UNDEFINED) {
+            // Attempt to enumerate V1(i)(i) on V2
+            application = apply_func(enumer, application);
+
+            *temp_pair = create_pair(i, application);
+
+            insert_el(*temp_pair, &temp_set->val.s);
+        } else {
+            // Add null Return to the set
+            *temp_pair = create_pair(i, nullReturn);
+            insert_el(*temp_pair, &temp_set->val.s);
+        }
+
+        cur_el = cur_el->next;
     }
 
     return temp_set;

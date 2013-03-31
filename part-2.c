@@ -30,6 +30,7 @@ Value* parse_ran_op(cJSON*);
 Value* parse_union_op(cJSON*);
 Value* parse_subtraction_op(cJSON*);
 Value* parse_intersect_op(cJSON*);
+Value* parse_diagonlise(cJSON*);
 Value* parse_member_op(cJSON*);
 Value* parse_tuple_op(cJSON*);
 Variable* find_variable(char*);
@@ -179,6 +180,34 @@ Value* parse_apply_func_op(cJSON* arguments) {
     return val;
 }
 
+Value* parse_diagonalise(cJSON* arguments) {
+    
+    /* Traverse into the first child of the array */
+    cJSON* argument = arguments->child;
+
+    Value* val_func = 0;
+
+    Value* function = 0;
+    Value* enumerator = 0;
+    Value* nullReturn = 0;
+
+    if (argument) {
+
+        function = parse_base_type(argument);
+        argument = argument->next;
+
+        enumerator = parse_base_type(argument);
+        argument = argument->next;
+
+        nullReturn = parse_base_type(argument);
+        argument = argument->next;
+
+        val_func = diagonalise(function, enumerator, nullReturn);
+    }
+
+    return val_func;
+}
+
 Value* parse_dom_op(cJSON* arguments) {
     
     /* Traverse into the first child of the array */
@@ -254,22 +283,34 @@ Value* parse_base_type(cJSON* argument) {
 
             } else if (strncmp(argument->child->valuestring, "set-difference", 30) == 0) {
                 val_temp = parse_subtraction_op(argument->child->next);
+
+            } else if (strncmp(argument->child->valuestring, "diagonalize", 30) == 0) {
+                val_temp = parse_diagonalise(argument->child->next); 
+
             } else if (strncmp(argument->child->valuestring, "union", 30) == 0) {
                 val_temp = parse_union_op(argument->child->next);
+
             } else if (strncmp(argument->child->valuestring, "intersection", 30) == 0) {
                 val_temp = parse_intersect_op(argument->child->next);
+
             } else if (strncmp(argument->child->valuestring, "is-injective", 30) == 0) {
                 val_temp = parse_is_inj_func_op(argument->child->next);
+
             } else if (strncmp(argument->child->valuestring, "is-function", 30) == 0) {
                 val_temp = parse_is_func_op(argument->child->next);
+
             } else if (strncmp(argument->child->valuestring, "apply-function", 30) == 0) {
                 val_temp = parse_apply_func_op(argument->child->next);
+
             } else if (strncmp(argument->child->valuestring, "domain", 30) == 0) {
                 val_temp = parse_dom_op(argument->child->next);
+
             } else if (strncmp(argument->child->valuestring, "range", 30) == 0) {
                 val_temp = parse_ran_op(argument->child->next);
+
             } else if (strncmp(argument->child->valuestring, "inverse", 30) == 0) {
                 val_temp = parse_inverse_func_op(argument->child->next);
+
             } else {
                 fprintf(stderr, "BAD INPUT: Undefined operator: %s\n", argument->child->valuestring);
                 fprintf(output_file, "BAD INPUT\n");
