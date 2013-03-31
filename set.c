@@ -357,7 +357,7 @@ Set* func_ran(Value* func) {
 }
 
 /**
- *
+ * Return a function for the diagonal of a function
  * func = V1
  * enumer = V2
  */
