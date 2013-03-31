@@ -175,9 +175,8 @@ int value_equality(Value* first, Value* second) {
             break;
         case SET:
             // Check set length
-            if (first->val.s->length == second->val.s->length) {
-                return 1;
-            } else if (set_contents_equality(first->val.s, second->val.s)) {
+            if (first->val.s->length == second->val.s->length &&
+                set_contents_equality(first->val.s, second->val.s)) {
                 return 1;
             }
             break;
