@@ -1,0 +1,95 @@
+\documentclass[DIN, pagenumber=false, fontsize=11pt, parskip=half]{scrartcl}
+
+\usepackage{ngerman}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+\usepackage{xyling}
+
+\usepackage{hyperref}
+
+% for matlab code
+% bw = blackwhite - optimized for print, otherwise source is colored
+%\usepackage[framed,numbered,bw]{mcode}
+
+% for other code
+%\usepackage{listings}
+
+\setlength{\parindent}{0em}
+
+% set section in CM
+\setkomafont{section}{\normalfont\bfseries\Large}
+
+\newcommand{\mytitle}[1]{{\noindent\Large\textbf{#1}}}
+\newcommand{\mysection}[1]{\textbf{\section*{#1}}}
+\newcommand{\mysubsection}[2]{\romannumeral #1) #2}
+
+%===================================
+\begin{document}
+
+\noindent\textbf{Foundations 2} \hfill \textbf{Heriot Watt University}\\
+\hfill Calum Gilchrist\\
+
+\mytitle{Foundations 2 Assignment: Part 4\hfill \today}
+
+
+%===================================
+
+\section{Part 4}
+
+\texttt{part-4.c} is the main file for the third part of the assignment.
+
+part-4.c expects there to be a file called input.json to run, prints an
+appropriate error if this is not the case, however.  Output is printed to the
+file \textbf{output.txt}.
+
+The new method \texttt{diagonalize} has been added to deal with diagonalization
+of functions. The function takes three arguments, a function that maps to a
+function: V1, an enumerator which takes the value if V1(x)(y) and transforms it
+and a nullReturn which is used as a marker when V1(x)(y) does not exist.
+
+In the case of diagonalization, \(x = y\) so that it is the diagonals of what
+can be visualised as a two dimensional array. The function \texttt{diagonalize}
+returns a function that represents a unique row for the set of V1.
+
+\subsection{Conditions}
+
+For \(F \notin ran(V1)\) to hold \(V2(V1(i)(i)) \neq V1(i)(i)\)
+where \(i \in dom(V1)\) must be true.
+
+Another issue with the current implementation is in the choice of null value placement. It is quite possible to select a value for this \(E3\) such that a row exists where that is the case.
+
+It would not be possible to use this implementation in
+the case of infinite sets, as there is no halting. In fact
+there is no actual checking if the implementation is in
+fact diagonalised. It simply returns F.  If a check for F
+was added into the program it would be possible to
+handle infinite inputs. As subsets \(ran(V1)\) could be
+used to create F and checked if they are contained.  The
+program could then halt if F is in fact part of the value
+of that particular subset.
+
+\subsection{Relation to Cantor's Diagonalization Argument}
+
+Cantor's theorem states that the cardinality of the \emph{powerset} of a
+countable set is in the cardinality of an uncountable infinite.  This can be
+proved by creating a function whose value is an element of the powerset of an
+infinite set such that the argument must both be contained and not contained in
+the corresponding set.
+
+Cantor's method uses an enumeration function, \(F\) on some
+set, \(V1\) such that \(F \in dom(V1) \to T\) where T is
+some set. It holds that there is some \(k\) such that for all elements \(F(k)(i)\) it holds that 
+\(F(k)(i) \neq F(i)(i)\) where \(i \in dom(V1)\).
+
+The method implemented here is similar as it creates a
+function \(G \in dom(V1) \to Q\). This method does
+differ however as it is applied on finite sets, so a
+placeholder is used if values are not contained
+within a set. For Cantor's method it is all \(\rho S\) whose
+elements can be of infinite cardinality. Because of the
+use of a placeholder, the method does not always hold.
+The conditions for this to hold are that
+\(V2(V1(i)(i)) \neq V1(i)(i)\) where 
+\(i \in dom(V1) \land i \in dom(ran(V1))\).
+\end{document}
